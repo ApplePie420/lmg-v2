@@ -6,7 +6,7 @@ const MongoClient = require("mongodb").MongoClient;
 var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
 
 var jwt = require("jsonwebtoken");
-var bcrypt = require("bcrypt");
+var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
     //console.log(req.body);
