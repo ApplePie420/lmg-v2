@@ -1,0 +1,13 @@
+extends layout
+
+block header-content
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand Navbar
+            form.form-inline(action="/api/auth/signin", method="post")
+                input.form-control.mr-sm-2(type='text', placeholder='Username', aria-label='Username', name="username")
+                input.form-control.mr-sm-2(type='password', placeholder='Password', aria-label='Password', name="password")
+                button.btn.btn-outline-success.my-2.my-sm-0(type='submit') Login
+            //- form.form-inline
+            //-     a(href="/register")
+            //-         button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register

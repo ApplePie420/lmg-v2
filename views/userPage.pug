@@ -1,0 +1,58 @@
+extends layout
+
+block layout-content
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/") Navbar
+            //a(href="/api/content/user") UserBoard
+            if loggedIn
+                h3 Logged in as 
+                    i "#{username}"
+                    
+            unless loggedIn
+                form.form-inline(action="/api/auth/signin", method="post")
+                    input.form-control.mr-sm-2(type='text', placeholder='Username', aria-label='Username', name="username")
+                    input.form-control.mr-sm-2(type='password', placeholder='Password', aria-label='Password', name="password")
+                    button.btn.btn-outline-success.my-2.my-sm-0(type='submit') Login
+                form.form-inline
+                    a(href="/register")
+                        button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
+    .Content
+        #map(style="width: 100vw; height: 800px;")
+        script.
+            var mymap = L.map('map',{ center: [50.0875959, 14.4504997], zoom: 12});
+            L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
+            //var marker = L.marker([50.07536, 14.42991]).addTo(mymap);
+            //marker.bindPopup("SSID<br>MAC<br>PSK");
+
+            
+
+            var dbJSON = !{JSON.stringify(dbData)};
+            var counter = 0;
+            //var obj = JSON.parse(kokotina)
+            for(var i = 0; i < dbJSON.length; i++) {
+                if(dbJSON[i].position[0] == "null") continue;
+                if(dbJSON[i].author == "N3ttX") counter++;
+                var iconColor = dbJSON[i].author == "N3ttX" ? new L.Icon({
+                                        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
+                                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                                        iconSize: [25, 41],
+                                        iconAnchor: [12, 41],
+                                        popupAnchor: [1, -34],
+                                        shadowSize: [41, 41]
+                                        }) : new L.Icon({
+                                        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                                        iconSize: [25, 41],
+                                        iconAnchor: [12, 41],
+                                        popupAnchor: [1, -34],
+                                        shadowSize: [41, 41]
+                                        });
+
+                var marker = L.marker([dbJSON[i].position[0], dbJSON[i].position[1]], {icon: iconColor}).addTo(mymap);
+                marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
+                                "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
+                                "<b>Pass: </b>" + dbJSON[i].password + "<br>");
+            }
+        
+        h3.analytics Queried #{dbData.length} results

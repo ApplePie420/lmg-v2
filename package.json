@@ -1,0 +1,26 @@
+{
+  "name": "lmg-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ui": "browser-sync start --proxy=localhost:8080 --files='**/*.css, **/*.pug, **/*.js' --ignore=node_modules --reload-delay=10 --no-ui --no-notify"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "browser-sync": "^2.26.7",
+    "connect-mongo": "^3.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.5.8",
+    "mongoose": "^5.9.18",
+    "nodemon": "^2.0.4",
+    "pug": "^3.0.0"
+  }
+}

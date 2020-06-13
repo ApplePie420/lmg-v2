@@ -1,0 +1,18 @@
+extends layout
+
+block layout-content
+    .View
+        a(href="/")
+            button.btn.btn-primary.mx-sm-3(type="button") Home
+        form(action="/api/auth/signup", method="post")
+            .form-group.col-sm-3
+                label(for="username") Username
+                input.form-control(type="username", name="username", placeholder="Username", required)
+                small#emailHelp.text-muted We'll never share your email with anyone (only if they pay good)
+            .form-group.col-sm-3
+                label(for="email") Email
+                input.form-control(type="email", name="email", palceholder="example@mail.com", required)
+            .form-group.col-sm-3
+                label(for="password") Password
+                input.form-control(type="password", name="password", placeholder="password", required)
+            button.btn.btn-success.mx-sm-3(type="submit") Register
