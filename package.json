@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "js-stringify": "^1.0.2",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.8",
     "mongoose": "^5.9.18",

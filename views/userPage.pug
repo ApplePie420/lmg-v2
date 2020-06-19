@@ -22,14 +22,10 @@ block layout-content
         script.
             var mymap = L.map('map',{ center: [50.0875959, 14.4504997], zoom: 12});
             L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
-            //var marker = L.marker([50.07536, 14.42991]).addTo(mymap);
-            //marker.bindPopup("SSID<br>MAC<br>PSK");
-
-            
 
             var dbJSON = !{JSON.stringify(dbData)};
-            var counter = 0;
-            //var obj = JSON.parse(kokotina)
+            var counter = !{0};
+
             for(var i = 0; i < dbJSON.length; i++) {
                 if(dbJSON[i].position[0] == "null") continue;
                 if(dbJSON[i].author == "N3ttX") counter++;
@@ -56,4 +52,17 @@ block layout-content
                                 "<a href='#'>[WIP] More info...  [WIP]</a>");
             }
         
-        h3.analytics Queried #{dbData.length} results
+        div(style="margin: 10px")
+            ul.list-group(style="width:16%")
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    Queried Results total
+                    span.badge.badge-primary.badge-pill #{dbData.length}
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    Queried N3ttX found
+                    span.badge.badge-primary.badge-pill #{stringify(nettFound)}
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    Queried Czechball found
+                    span.badge.badge-primary.badge-pill #{stringify(dbData.length-nettFound)}
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    Queried UPC WiFis
+                    span.badge.badge-primary.badge-pill #{stringify(UPCcounter)}

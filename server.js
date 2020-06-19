@@ -49,6 +49,10 @@ app.get("/register", (req, res) => {
   res.render("register");
 });
 
+app.get("/changelog", (req, res) =>{
+  res.render("changelog");
+});
+
 // routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);

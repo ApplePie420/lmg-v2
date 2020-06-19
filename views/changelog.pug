@@ -1,0 +1,19 @@
+extends layout
+
+block layout-content
+    div.Header
+            nav.navbar.navbar-light.bg-light
+                a.navbar-brand(href="/") Navbar
+
+    .Content
+        h4 19-06-2020
+            h5
+                ul(style="font-family: monospace, Consolas")
+                    i
+                        li Changed marker resolution (to laod map faster)
+                        li Removed client-side marker shadow rendering
+                        li Removed "userBoard" link from "/" route
+                        li Created this changelog
+                        li Fixed some DB issues (old script hadn't UTF-8 encoding and some SSIDs were garbled)
+                        li Added analytics section under the map
+                        li New register input (WiGLE API key for "more info" about wifi)

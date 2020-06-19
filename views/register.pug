@@ -13,6 +13,10 @@ block layout-content
                 label(for="email") Email
                 input.form-control(type="email", name="email", palceholder="example@mail.com", required)
             .form-group.col-sm-3
+                label(for="wigle") WiGLE API key (base64 encoded)
+                input.form-control(type="text", name="wigle", palceholder="YXFzd2RlZnJndGh6anVraWxvcDI1OHl4Y3Zibm03OC0yMzY6Ymd0emhuanU0NTdhbHM2NWZydDhnYjEyNDd2Y2ZyZDY=")
+                small#wigleHelp.text-muted You don't have to enter your WiGLE API key, however you won't be able to see "More info" of any WiFi (since it gets that info from WiGLE).
+            .form-group.col-sm-3
                 label(for="password") Password
                 input.form-control(type="password", name="password", placeholder="password", required)
             button.btn.btn-success.mx-sm-3(type="submit") Register

@@ -3,6 +3,8 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 const MongoClient = require("mongodb").MongoClient;
+const stringify = require("js-stringify");
+
 var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
 
 var jwt = require("jsonwebtoken");
@@ -104,11 +106,23 @@ exports.signin = (req, res) => {
 
         MongoClient.connect(url, function(err, db) {                   
             if(err) throw err;                                       
-            var dbo = db.db("lmg-db");                             
-            dbo.collection("wifis").find().toArray(function(err, result) { 
-                if(err) throw err;                         
-                db.close();  
-                res.render("userPage", {loggedIn: true, username: user.username, dbData: result});
+            var dbo = db.db("lmg-db");
+            var counter = 0;
+            var UPCcounter = 0;                           
+            dbo.collection("wifis").find().toArray(function(err, result) {
+                if(err) throw err;  
+                
+                result.forEach(element => {
+                    if(element.author == "N3ttX") {
+                        counter += 1;
+                    }
+                    if(element.SSID.substring(0,3) == "UPC") {
+                        UPCcounter += 1;
+                    }
+                });
+
+                db.close(); 
+                res.render("userPage", {loggedIn: true, username: user.username, dbData: result, stringify, nettFound: counter, UPCcounter: UPCcounter});
             });
         });
     });

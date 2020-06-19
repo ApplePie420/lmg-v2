@@ -5,3 +5,7 @@ body {
 #map {
     height: 480px;
 }
+
+.Content {
+    margin: 10px;
+}
