@@ -4,6 +4,7 @@ const User = db.user;
 const Role = db.role;
 const MongoClient = require("mongodb").MongoClient;
 const stringify = require("js-stringify");
+const moment = require("moment");
 
 var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
 
@@ -112,6 +113,7 @@ exports.signin = (req, res) => {
             dbo.collection("wifis").find().toArray(function(err, result) {
                 if(err) throw err;  
                 
+                var times = [];
                 result.forEach(element => {
                     if(element.author == "N3ttX") {
                         counter += 1;
@@ -119,10 +121,17 @@ exports.signin = (req, res) => {
                     if(element.SSID.substring(0,3) == "UPC") {
                         UPCcounter += 1;
                     }
+                    if(element.timestamp) {
+                        times.push(element.timestamp);
+                    }
+                    
                 });
-
+                times.sort();
+                var delta = moment.duration("02:00:00");
+                var lastDate = times[times.length-1];
+                //console.log(times[times.length-1]);
                 db.close(); 
-                res.render("userPage", {loggedIn: true, username: user.username, dbData: result, stringify, nettFound: counter, UPCcounter: UPCcounter});
+                res.render("userPage", {loggedIn: true, username: user.username, dbData: result, stringify, nettFound: counter, UPCcounter: UPCcounter, lastDate: lastDate});
             });
         });
     });

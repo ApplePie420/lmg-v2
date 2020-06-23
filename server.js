@@ -24,6 +24,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
+app.locals.moment = require("moment");
+
 // database related
 const db = require("./models");
 const Role = db.role;

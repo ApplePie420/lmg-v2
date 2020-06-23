@@ -18,9 +18,9 @@ block layout-content
                     a(href="/register")
                         button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
     .Content
-        #map(style="width: 100vw; height: 800px;")
+        #map(style="width: 100%; height: 700px;")
         script.
-            var mymap = L.map('map',{ center: [50.0875959, 14.4504997], zoom: 12});
+            var mymap = L.map('map').locate({setView: true, maxZoom: 14});
             L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
 
             var dbJSON = !{JSON.stringify(dbData)};
@@ -49,20 +49,23 @@ block layout-content
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
-                                "<a href='#'>[WIP] More info...  [WIP]</a>");
+                                "<a href='https://wigle.net/search?netid=" + dbJSON[i].MAC + "' target='_blank' data-toggle='tooltip' data-placement='top' title='You have to be logged in WiGLE to use this function.'>More info...</a>");
             }
         
         div(style="margin: 10px")
             ul.list-group(style="width:16%")
                 li.list-group-item.d-flex.justify-content-between.align-items-center
-                    Queried Results total
+                    | Results total
                     span.badge.badge-primary.badge-pill #{dbData.length}
                 li.list-group-item.d-flex.justify-content-between.align-items-center
-                    Queried N3ttX found
+                    | N3ttX found
                     span.badge.badge-primary.badge-pill #{stringify(nettFound)}
                 li.list-group-item.d-flex.justify-content-between.align-items-center
-                    Queried Czechball found
+                    | Czechball found
                     span.badge.badge-primary.badge-pill #{stringify(dbData.length-nettFound)}
                 li.list-group-item.d-flex.justify-content-between.align-items-center
-                    Queried UPC WiFis
+                    | UPC WiFis
                     span.badge.badge-primary.badge-pill #{stringify(UPCcounter)}
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    | Last added on
+                    span.badge.badge-primary.badge-pill #{moment(lastDate).utcOffset(0).format("DD/MM/YYYY HH:mm")} 
