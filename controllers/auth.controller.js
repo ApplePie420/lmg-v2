@@ -126,10 +126,13 @@ exports.signin = (req, res) => {
                     }
                     
                 });
-                times.sort();
-                var delta = moment.duration("02:00:00");
+
+                times.sort(function(a,b) {
+                    return new Date(b.date) - new Date(a.date);
+                });
                 var lastDate = times[times.length-1];
                 //console.log(times[times.length-1]);
+
                 db.close(); 
                 res.render("userPage", {loggedIn: true, username: user.username, dbData: result, stringify, nettFound: counter, UPCcounter: UPCcounter, lastDate: lastDate});
             });

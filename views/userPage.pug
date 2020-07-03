@@ -3,7 +3,7 @@ extends layout
 block layout-content
     div.Header
         nav.navbar.navbar-light.bg-light
-            a.navbar-brand(href="/") Navbar
+            a.navbar-brand(href="/") Home
             //a(href="/api/content/user") UserBoard
             if loggedIn
                 h3 Logged in as 
@@ -29,6 +29,7 @@ block layout-content
             for(var i = 0; i < dbJSON.length; i++) {
                 if(dbJSON[i].position[0] == "null") continue;
                 if(dbJSON[i].author == "N3ttX") counter++;
+
                 var iconColor = dbJSON[i].author == "N3ttX" ? new L.Icon({
                                         iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
                                         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -51,21 +52,52 @@ block layout-content
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
                                 "<a href='https://wigle.net/search?netid=" + dbJSON[i].MAC + "' target='_blank' data-toggle='tooltip' data-placement='top' title='You have to be logged in WiGLE to use this function.'>More info...</a>");
             }
+
+            function sortWifis() {
+                var input, filter, data, list, li, i, txtValue;
+                input = document.getElementById("searchInput");
+                filter = input.value.toUpperCase();
+                list = document.getElementById("wifiList");
+                li = list.getElementsByTagName("li");
+
+                for(i = 0; i < li.length; i++) {
+                    data = li[i].getElementsByTagName("a")[0];
+                    txtValue = data.textContent || data.innerText;
+                    
+                    if(txtValue.toUpperCase().indexOf(filter) > -1) {
+                        data.parentElement.style.display = "";
+                    } else {
+                        data.parentElement.style.display = "none";
+                    }
+                }
+            }
+
+            function centerMapOnWifi(ssid) {
+                console.log(ssid);
+            }
         
-        div(style="margin: 10px")
-            ul.list-group(style="width:16%")
-                li.list-group-item.d-flex.justify-content-between.align-items-center
-                    | Results total
-                    span.badge.badge-primary.badge-pill #{dbData.length}
-                li.list-group-item.d-flex.justify-content-between.align-items-center
-                    | N3ttX found
-                    span.badge.badge-primary.badge-pill #{stringify(nettFound)}
-                li.list-group-item.d-flex.justify-content-between.align-items-center
-                    | Czechball found
-                    span.badge.badge-primary.badge-pill #{stringify(dbData.length-nettFound)}
-                li.list-group-item.d-flex.justify-content-between.align-items-center
-                    | UPC WiFis
-                    span.badge.badge-primary.badge-pill #{stringify(UPCcounter)}
-                li.list-group-item.d-flex.justify-content-between.align-items-center
-                    | Last added on
-                    span.badge.badge-primary.badge-pill #{moment(lastDate).utcOffset(0).format("DD/MM/YYYY HH:mm")} 
+        div.container
+            div(style="margin: 10px").row
+                .col-sm
+                    ul.list-group(style="width:100%")
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | Results total
+                            span.badge.badge-light.badge-pill #{dbData.length}
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | N3ttX found
+                            span.badge.badge-warning.badge-pill #{stringify(nettFound)}
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | Czechball found
+                            span.badge.badge-primary.badge-pill #{stringify(dbData.length-nettFound)}
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | UPC WiFis
+                            span.badge.badge-light.badge-pill #{stringify(UPCcounter)}
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | Last added on
+                            span.badge.badge-light.badge-pill #{moment(lastDate).utcOffset(0).format("DD/MM/YYYY HH:mm")}
+                .col-sm
+                    input(type="text", class="form-control", id="searchInput", onkeyup="sortWifis()", placeholder="Filter SSIDs..." autocomplete="off", style="width: 100%")
+                    ul.list-group(style="width:100%; height: 200px; overflow: auto", id="wifiList")
+                        each wifi in dbData
+                            li.list-group-item
+                                a(onclick="centerMapOnWifi()") #{wifi.SSID}
