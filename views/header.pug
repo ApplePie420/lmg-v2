@@ -3,7 +3,7 @@ extends layout
 block header-content
     div.Header
         nav.navbar.navbar-light.bg-light
-            a.navbar-brand Navbar
+            a.navbar-brand Home
             form.form-inline(action="/api/auth/signin", method="post")
                 input.form-control.mr-sm-2(type='text', placeholder='Username', aria-label='Username', name="username")
                 input.form-control.mr-sm-2(type='password', placeholder='Password', aria-label='Password', name="password")
