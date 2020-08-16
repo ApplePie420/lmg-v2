@@ -1,0 +1,18 @@
+extends layout
+
+block layout-content
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/user") Home
+            form.form-inline(action="/logout", method="GET")
+                .form-group.mb-2
+                    h3 #{username}
+                .form-group.mx-sm-3.mb-2
+                    button.btn.btn-danger(type="submit") Log Out
+           
+    div(style="margin: 10px")
+        a(href="/map") 
+            button.btn.btn-info(type="button") WiFi Map
+    
+    p
+        | this is a user profile page
