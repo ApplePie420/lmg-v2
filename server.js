@@ -94,7 +94,7 @@ app.post("/registerUser", (req, res, next) => {
     UserDetails.register({
       username: req.body.username,
       active: false
-    }, req.body.password);
+    }, req.body.password, req.body.email);
     res.redirect(`/?info=User ${req.body.username} sucesfully registered`);
   } catch (error) {
     next(error);
