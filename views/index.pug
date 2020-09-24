@@ -4,18 +4,18 @@ block layout-content
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/") Home
-            if loggedIn
-                h3 Logged in as
-                    i "#{username}"
-            unless loggedIn
-                form.form-inline(action="/api/auth/signin", method="post")
-                    input.form-control.mr-sm-2(type='text', placeholder='Username', aria-label='Username', name="username")
-                    input.form-control.mr-sm-2(type='password', placeholder='Password', aria-label='Password', name="password")
-                    button.btn.btn-outline-success.my-2.my-sm-0(type='submit') Login
-                form.form-inline
-                    a(href="/register")
-                        button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
+            form.form-inline(action="/login", method="post")
+                input.form-control.mr-sm-2(type='text', placeholder='Username', aria-label='Username', name="username")
+                input.form-control.mr-sm-2(type='password', placeholder='Password', aria-label='Password', name="password")
+                button.btn.btn-outline-success.my-2.my-sm-0(type='submit') Login
+            form.form-inline
+                a(href="/register")
+                    button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
 
     div(style="margin: 10px")
+        h1 Oi, welcome. Due to some recent changes in backend, respectively auth system,
+            font(style="color: red")  YOU NEED TO REGISTER AGAIN.
+            |  sorry for inconviniences, but I'm trying to make this system as robust, reliable and secure as possible,
+            |and this step was necessary to ensure that. Thanks for understanding.
         a(href="/changelog") 
             button.btn.btn-info(type="button") Changelog
