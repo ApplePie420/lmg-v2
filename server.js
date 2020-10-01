@@ -1,20 +1,33 @@
+// routing
 const express = require("express");
+
+// cors
 const bodyParser = require("body-parser");
 const cors = require("cors");
+
+// system related
 const path = require("path");
+
+// auth and session
 const expressSession = require("express-session")({
   secret: "secret",
   resave: false,
   saveUninitialized: false,
   maxAge: Date.now() + (30 * 86400 * 1000)
 });
-const mongoose = require("mongoose");
 const passport = require("passport")
 const passportLocalMongoose = require("passport-local-mongoose");
 const connectEnsureLogin = require("connect-ensure-login");
+const apiHeaderKey = require("passport-headerapikey");
+
+// database
+const mongoose = require("mongoose");
 const MongoClient = require("mongodb").MongoClient;
+
+// misc
 const stringify = require("js-stringify");
 const moment = require("moment");
+const crypto = require("crypto");
 
 const UserDetail = require("./models/user.model");
 
@@ -46,6 +59,7 @@ app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
 
+// use momentJS for manipulating time
 app.locals.moment = require("moment");
 
 //connect to db
@@ -60,6 +74,22 @@ const UserDetails = mongoose.model("userInfo", UserDetail, "userInfo");
 passport.use(UserDetails.createStrategy());
 passport.serializeUser(UserDetails.serializeUser());
 passport.deserializeUser(UserDetails.deserializeUser());
+
+passport.use(new apiHeaderKey.HeaderAPIKeyStrategy(
+  { header: "Authorization" },
+  false,
+  function(apikey, done) {
+    
+    UserDetails.findOne({apikey: apikey}, function(err, user) {
+      
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      
+      passport.authenticate("local");
+      return done(null, user);
+    });
+  }
+));
 
 // routes reworked
 // handle login, post request
@@ -86,6 +116,14 @@ app.post("/login", (req, res, next) => {
       return res.redirect("/user");
     });
   })(req, res, next);
+});
+
+app.post("/api/mobapp/authAPI", passport.authenticate("headerapikey", {session: false, failureRedirect: "/?err=Invalid API key"}), function(req, res) {
+  req.logIn(req.user, function(err) {
+    if (err) { return next(err); }
+
+    return res.send("Authenticated");
+  });
 });
 
 // register a new user
@@ -171,14 +209,51 @@ app.get("/user", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
 });
 
 // API call for getting user info
-// TODO: call this with user credentials in payload
-app.get("/userInfo", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+app.get("/api/userInfo", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
   res.send({
     user: req.user
   });
 });
 
-//TODO: create API responses for mobile app
+// Calling this function while logged in returns a md5 hash of whole database
+app.get("/api/mobapp/dbHash", passport.authenticate("headerapikey", {session: false, failureMessage: "Incorrect/missing API key"}), async (req, res) => {
+  var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
+
+  MongoClient.connect(url, async function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("lmg-db");
+
+    var hash = undefined;
+
+   await dbo.collection("wifis").find().toArray().then(result => {
+      if(err) throw err;
+
+      //console.log(JSON.stringify(result));
+
+      hash = crypto.createHash("md5").update(JSON.stringify(result)).digest("hex");
+
+      res.send(hash);
+    });
+
+    db.close(); 
+  });
+});
+
+// Calling this while logged in returns JSON object, which contains whole lmg-db.wifis collection
+app.get("/api/mobapp/getCollection", passport.authenticate("headerapikey", {session: false, failureMessage: "Incorrect/missing API key"}), async (req, res) => {
+  var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
+
+  MongoClient.connect(url, async function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("lmg-db");
+
+   await dbo.collection("wifis").find().toArray().then(result => {
+      res.send(result);
+    });
+
+    db.close(); 
+  });
+});
 
 // changelog route page
 app.get("/changelog", (req, res) => {

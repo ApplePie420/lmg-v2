@@ -13,13 +13,11 @@ block layout-content
                     button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
 
     div(style="margin: 10px")
-        h1 Oi, welcome. Due to some recent changes in backend, respectively auth system,
-            font(style="color: red")  YOU NEED TO REGISTER AGAIN.
-            |  sorry for inconviniences, but I'm trying to make this system as robust, reliable and secure as possible,
-            |and this step was necessary to ensure that. Thanks for understanding.
-        a(href="/changelog") 
-            button.btn.btn-info(type="button") Changelog
-        br
-        | This website is still in "WIP" state. Not everything have to be 100% functional. Be patient. 
-        br
-        img(src="https://static.thenounproject.com/png/83064-200.png")
+        div.container
+            h4 Oi, welcome. Due to some recent changes in backend, respectively auth system,
+                font(style="color: red")
+                    b YOU NEED TO REGISTER AGAIN.
+                |  sorry for inconviniences, but I'm trying to make this system as robust, reliable and secure as possible,
+                | and this step was necessary to ensure that. Thanks for understanding.
+            a(href="/changelog") 
+                button.btn.btn-info(type="button") Changelog
