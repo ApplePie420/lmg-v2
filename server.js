@@ -63,7 +63,7 @@ app.use(passport.session());
 app.locals.moment = require("moment");
 
 //connect to db
-mongoose.connect("mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db", {
+dbConnection = mongoose.connect("mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -147,7 +147,7 @@ app.get("/logout", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
 
 // main page
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("index", {error: req.query.err, info: req.query.info});
 });
 
 // register page
@@ -186,7 +186,6 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
         return new Date(b.date) - new Date(a.date);
       });
       var lastDate = times[times.length - 1];
-      //console.log(times[times.length-1]);
 
       db.close();
       res.render("wifi-map", {
@@ -204,7 +203,7 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
 // user profile page
 app.get("/user", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
   res.render("userProfile", {
-    username: req.user.username
+    userData: req.user
   });
 });
 

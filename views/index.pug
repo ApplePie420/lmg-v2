@@ -14,6 +14,13 @@ block layout-content
 
     div(style="margin: 10px")
         div.container
+            if error
+                .alert.alert-danger(role="alert")
+                    | #{error}
+
+            if info
+                .alert.alert-info(role="alert")
+                    | #{info}
             h4 Oi, welcome. Due to some recent changes in backend, respectively auth system,
                 font(style="color: red")
                     b YOU NEED TO REGISTER AGAIN.
