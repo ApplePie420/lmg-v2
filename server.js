@@ -40,6 +40,7 @@ const { resolve } = require("path");
 const { rejects } = require("assert");
 const cookieParser = require("cookie-parser");
 const { session } = require("passport");
+const { type } = require("os");
 
 // init express app
 const app = express();
@@ -393,8 +394,10 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
         if (element.timestamp) {
           times.push(element.timestamp);
         }
-
       });
+
+      // since leaflet got updated, it no longer supports not displaying null positions. So we need to filter them out.
+      var filtered = result.filter(element => element.position[0] != "null");
 
       times.sort(function (a, b) {
         return new Date(b.date) - new Date(a.date);
@@ -402,9 +405,10 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
       var lastDate = times[times.length - 1];
 
       db.close();
+      //console.log(result);
       res.render("wifi-map", {
         username: req.user.username,
-        dbData: result,
+        dbData: filtered,
         stringify,
         nettFound: counter,
         UPCcounter: UPCcounter,
