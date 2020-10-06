@@ -17,12 +17,13 @@ block layout-content
     .Content
         #map(style="width: 100%; height: 700px;")
         script.
-            var mymap = L.map('map').locate({setView: true, maxZoom: 14});
+            var mymap = L.map('map', {renderer: L.canvas()}).locate({setView: true, maxZoom: 14});
             L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
 
             var dbJSON = !{JSON.stringify(dbData)};
             var counter = !{0};
             for(var i = 0; i < dbJSON.length; i++) {
+                /*
                 var iconColor = dbJSON[i].author == "N3ttX" ? new L.Icon({
                                         iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
                                         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -38,8 +39,13 @@ block layout-content
                                         popupAnchor: [1, -34],
                                         shadowSize: [41, 41]
                                         });
+                */
 
-                var marker = L.marker([dbJSON[i].position[0], dbJSON[i].position[1]], {icon: iconColor}).addTo(mymap);
+                var marker = L.circleMarker([dbJSON[i].position[0], dbJSON[i].position[1]], {
+                    color: dbJSON[i].author == "N3ttX" ? "#f0ad4e" : "#0275d8",
+                    weight: 2,
+                    radius: 7
+                    }).addTo(mymap);
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
