@@ -6,6 +6,6 @@ body {
     height: 480px;
 }
 
-.Content {
-    margin: 10px;
+.profile-img {
+    border-radius: 50%;
 }

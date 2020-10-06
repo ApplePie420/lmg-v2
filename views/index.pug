@@ -13,7 +13,7 @@ block layout-content
                     button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
 
     div(style="margin: 10px")
-        div.container
+        .container
             if error
                 .alert.alert-danger(role="alert")
                     | #{error}
@@ -21,10 +21,10 @@ block layout-content
             if info
                 .alert.alert-info(role="alert")
                     | #{info}
-            h4 Oi, welcome. Due to some recent changes in backend, respectively auth system,
+            h5 Welcome. Due to some recent changes in backend, respectively auth system, 
                 font(style="color: red")
                     b YOU NEED TO REGISTER AGAIN.
-                |  sorry for inconviniences, but I'm trying to make this system as robust, reliable and secure as possible,
+                |  Sorry for inconviniences, but I'm trying to make this system as robust, reliable and secure as possible,
                 | and this step was necessary to ensure that. Thanks for understanding.
             a(href="/changelog") 
                 button.btn.btn-info(type="button") Changelog

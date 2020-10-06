@@ -1,0 +1,24 @@
+extends layout
+
+block layout-content
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/user") Home                        
+            form.form-inline(action="/logout", method="GET")
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
+                    button.btn.btn-danger(type="submit") Log Out
+
+    .container
+        form(action="/pfpUpload", method="POST", enctype="multipart/form-data")
+            .form-group
+                label(for="pfp") Profile Picture
+                input.form-control(type="file", name="pfp")
+            
+            .form-group
+                button.btn.btn-success(type="submit") Upload picture

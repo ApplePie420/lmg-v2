@@ -3,18 +3,44 @@ extends layout
 block layout-content
     div.Header
         nav.navbar.navbar-light.bg-light
-            a.navbar-brand(href="/user") Home
+            a.navbar-brand(href="/user") Home                        
             form.form-inline(action="/logout", method="GET")
-                .form-group.mb-2
-                    h3 #{username}
-                .form-group.mx-sm-3.mb-2
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
                     button.btn.btn-danger(type="submit") Log Out
-           
-    div(style="margin: 10px")
-        a(href="/map") 
-            button.btn.btn-info(type="button") WiFi Map
-    
-        p
-            | Your profile page. This will contain projects you have access to, and your settings. Still in WIP tho :/
+  
+    .container(style="margin-top: 10px")
+        if error
+            .alert.alert-danger(role="alert")
+                | #{error}
+        if info
+            .alert.alert-info(role="alert")
+                | #{info}
 
-        img(src="https://static.thenounproject.com/png/83064-200.png")
+        .row
+            .col-sm-6.d-flex.align-items-stretch
+                .card
+                    .card-body
+                        h5.card-title WiFi Map
+                        p.card-text Our biggest project yet. Map of all pwned WiFis around the world.
+                        a.btn.btn-info(href="/map") Visit
+            .col-sm-6.d-flex.align-items-stretch
+                .card
+                    .card-body
+                        h5.card-title LMG Calendar
+                        p.card-text WIP Hopefully automatically updated calendar with all LMGs that happened, are happening and will happen. WIP
+                        a.btn.btn-info(href="#" disabled) Visit
+
+        .row(style="margin-top: 10px")
+            .col-sm-12
+                .card.text-white.bg-danger.mb-3
+                    .card-header This page is WIP
+                    .card-body
+                        .card-title WIP
+                        .card-text Your profile page. This will contain projects you have access to, and your settings. Still in WIP tho :/
+                        img(src="https://static.thenounproject.com/png/83064-200.png" width="94" height="94")

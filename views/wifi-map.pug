@@ -3,11 +3,15 @@ extends layout
 block layout-content
     div.Header
         nav.navbar.navbar-light.bg-light
-            a.navbar-brand(href="/user") Home
+            a.navbar-brand(href="/user") Home                        
             form.form-inline(action="/logout", method="GET")
-                .form-group.mb-2
-                    h3 #{username}
-                .form-group.mx-sm-3.mb-2
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
                     button.btn.btn-danger(type="submit") Log Out
                     
     .Content
@@ -20,9 +24,6 @@ block layout-content
             var counter = !{0};
 
             for(var i = 0; i < dbJSON.length; i++) {
-                if(dbJSON[i].position[0] == "null") continue;
-                if(dbJSON[i].author == "N3ttX") counter++;
-
                 var iconColor = dbJSON[i].author == "N3ttX" ? new L.Icon({
                                         iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
                                         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -65,12 +66,13 @@ block layout-content
                 }
             }
 
+            //TODO: when clicked on a wifi in the list, the map will center at the point
             function centerMapOnWifi(ssid) {
                 console.log(ssid);
             }
         
-        div.container
-            div(style="margin: 10px").row
+        .container
+            .row(style="margin: 10px")
                 .col-sm
                     ul.list-group(style="width:100%")
                         li.list-group-item.d-flex.justify-content-between.align-items-center

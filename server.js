@@ -2,8 +2,11 @@
 const express = require("express");
 
 // cors
-const bodyParser = require("body-parser");
 const cors = require("cors");
+
+// http parsing
+const bodyParser = require("body-parser");
+const cookie_parser = require("cookie-parser");
 
 // system related
 const path = require("path");
@@ -11,7 +14,7 @@ const path = require("path");
 // auth and session
 const expressSession = require("express-session")({
   secret: "secret",
-  resave: false,
+  resave: true,
   saveUninitialized: false,
   maxAge: Date.now() + (30 * 86400 * 1000)
 });
@@ -28,8 +31,15 @@ const MongoClient = require("mongodb").MongoClient;
 const stringify = require("js-stringify");
 const moment = require("moment");
 const crypto = require("crypto");
+const multer = require("multer");
+const GridFsStorage = require("multer-gridfs-storage");
+const Grid = require("gridfs-stream");
 
 const UserDetail = require("./models/user.model");
+const { resolve } = require("path");
+const { rejects } = require("assert");
+const cookieParser = require("cookie-parser");
+const { session } = require("passport");
 
 // init express app
 const app = express();
@@ -38,9 +48,6 @@ const app = express();
 var corsOptions = {
   origin: "http://localhost:8081"
 };
-
-// use express middleware
-// CORS
 app.use(cors(corsOptions));
 
 // parsng Http body
@@ -48,6 +55,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(cookieParser());
 
 // for serving files
 app.use(express.static(path.join(__dirname, "public")));
@@ -59,15 +67,62 @@ app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function(req, res, next) {
+  if(req.user) req.user.pfp = req.user.pfp;
+  next();
+});
+
 // use momentJS for manipulating time
 app.locals.moment = require("moment");
 
-//connect to db
-dbConnection = mongoose.connect("mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db", {
+// mongoDB URL
+const mongoURI = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db";
+
+// create GridFS bucket...
+/*
+  TODO: rework this
+  ? Possible bug
+  idk why, but I can't create gridFS bucket inside existing function, so I have to open the DB two times, one only for creating bucket,
+  second for everything else.. idk this is retarded
+*/
+var tempConn = mongoose.createConnection(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
 
+let gfs;
+tempConn.once("open", () => {
+  gfs = Grid(tempConn.db, mongoose.mongo);
+  gfs.collection("uploads");
+})
+
+//connect to db
+const dbConn = mongoose.connect(mongoURI,
+ {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+// create gridfs storage
+const storage = new GridFsStorage({
+  url: mongoURI,
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+        const filename = file.originalname;
+        const fileInfo = {
+          filename: filename,
+          bucketName: 'uploads'
+        };
+        resolve(fileInfo);
+    });
+  }
+});
+
+const upload = multer({
+  storage
+});
+
+// middleware config
 UserDetail.plugin(passportLocalMongoose);
 const UserDetails = mongoose.model("userInfo", UserDetail, "userInfo");
 
@@ -91,9 +146,14 @@ passport.use(new apiHeaderKey.HeaderAPIKeyStrategy(
   }
 ));
 
-// routes reworked
-// handle login, post request
-// this shall try to authenticate user, if not, return to login page with error message
+/*
+ * ROUTER REWORKED V2.0
+ ! AUTHENTICATION SECTION
+*/
+
+/*
+  Login post. Should concatc mongoDB and authenticate the user. Redirects to /user, if error, redirects to / with error message
+*/
 app.post("/login", (req, res, next) => {
   passport.authenticate("local", {
     successReturnToOrRedirect: "/",
@@ -118,6 +178,9 @@ app.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
+/*
+  Same as login, but with API key for authenticating third-party apps.
+*/
 app.post("/api/mobapp/authAPI", passport.authenticate("headerapikey", {session: false, failureRedirect: "/?err=Invalid API key"}), function(req, res) {
   req.logIn(req.user, function(err) {
     if (err) { return next(err); }
@@ -126,7 +189,9 @@ app.post("/api/mobapp/authAPI", passport.authenticate("headerapikey", {session: 
   });
 });
 
-// register a new user
+/*
+  Creates a new user based on user model, inserts into db. Password is automatically hashed and salted.
+*/
 app.post("/registerUser", (req, res, next) => {
   try {
     UserDetails.register({
@@ -139,13 +204,163 @@ app.post("/registerUser", (req, res, next) => {
   }
 });
 
-// logout
+/*
+  Destroys session and log out the user.
+*/
 app.get("/logout", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
   req.logOut();
-  res.redirect("/");
+  res.redirect("/?info=User logged out succesfully");
 });
 
-// main page
+/*
+  ! User details routes
+*/
+
+/*
+  Changes user details in DB. 
+*/
+app.post("/saveUserDetails", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+  try {
+    // change password hash and salt, it have to be done by this because hashing and salt generation shit
+    UserDetails.findByUsername(req.body.username).then(function(sanitizedUser) {
+      if(sanitizedUser) {
+        sanitizedUser.setPassword(req.body.password, function() {
+          sanitizedUser.save();
+        });
+      } else {
+        res.status(500).json({message: "this user does not exist"});
+      }
+      }, function(err) {
+        console.error(err);
+    });
+
+    var connection = MongoClient.connect(mongoURI, function(err, db) {
+      if (err) throw err;
+
+      var dbo = db.db("lmg-db");
+
+      dbo.collection("userInfo").updateOne({username: req.body.username}, {$set: 
+        {
+          username: req.body.username,
+          email: req.body.email,
+          wigle: req.body.wigle,
+          pwnagotchi: req.body.pwnagotchi
+        }}, function(err, res) {
+        if (err) throw err;
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  res.redirect("/user?info=Succesfully updated");
+});
+
+/*
+  @API call
+  TODO: Actually get info from DB and return that
+  Return details about user
+*/
+app.get("/api/userInfo", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+  res.send({
+    user: req.user
+  });
+});
+
+/*
+  Profile picture upload
+*/
+app.post("/pfpUpload", upload.single("pfp"), connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+  MongoClient.connect(mongoURI, function(err, db) {
+    if (err) throw err;
+
+    var dbo = db.db("lmg-db");
+
+    dbo.collection("userInfo").updateOne({username: req.user.username}, {$set: 
+      {
+        pfp: req.file.filename
+      }}, function(err, res) {
+      if (err) throw err;
+    });
+  });
+  res.redirect("/user");
+});
+
+/*
+  Retrieve image back
+*/
+app.get('/image/:filename', (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    // Check if the input is a valid image or not
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: 'No file exists'
+      });
+    }
+
+    // If the file exists then check whether it is an image
+    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+      // Read output to browser
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: 'Not an image'
+      });
+    }
+  });
+});
+
+/*
+  ! API routes
+*/
+
+/*
+  @API call
+  Calling this function while logged in returns a md5 hash of whole database
+*/
+app.get("/api/mobapp/dbHash", passport.authenticate("headerapikey", {session: false, failureMessage: "Incorrect/missing API key"}), async (req, res) => {
+  MongoClient.connect(mongoURI, async function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("lmg-db");
+
+    var hash = undefined;
+
+   await dbo.collection("wifis").find().toArray().then(result => {
+      if(err) throw err;
+
+      //console.log(JSON.stringify(result));
+
+      hash = crypto.createHash("md5").update(JSON.stringify(result)).digest("hex");
+
+      res.send(hash);
+    });
+
+    db.close(); 
+  });
+});
+
+/*
+  @API call
+  Calling this while logged in returns JSON object, which contains whole lmg-db.wifis collection
+*/
+app.get("/api/mobapp/getCollection", passport.authenticate("headerapikey", {session: false, failureMessage: "Incorrect/missing API key"}), async (req, res) => {
+  MongoClient.connect(mongoURI, async function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("lmg-db");
+
+   await dbo.collection("wifis").find().toArray().then(result => {
+      res.send(result);
+    });
+
+    db.close(); 
+  });
+});
+
+/*
+  ! Static routes
+*/
+
+// Home page
 app.get("/", (req, res) => {
   res.render("index", {error: req.query.err, info: req.query.info});
 });
@@ -158,9 +373,8 @@ app.get("/register", (req, res) => {
 // map page
 app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
   // query wifi data and render the page
-  var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
 
-  MongoClient.connect(url, function (err, db) {
+  MongoClient.connect(mongoURI, function (err, db) {
     if (err) throw err;
     var dbo = db.db("lmg-db");
     var counter = 0;
@@ -194,7 +408,8 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
         stringify,
         nettFound: counter,
         UPCcounter: UPCcounter,
-        lastDate: lastDate
+        lastDate: lastDate,
+        pfp: req.user.pfp
       });
     });
   });
@@ -203,54 +418,19 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
 // user profile page
 app.get("/user", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
   res.render("userProfile", {
-    userData: req.user
+    username: req.user.username,
+    pfp: req.user.pfp,
+    error: req.query.err, 
+    info: req.query.info
   });
 });
 
-// API call for getting user info
-app.get("/api/userInfo", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
-  res.send({
-    user: req.user
-  });
-});
-
-// Calling this function while logged in returns a md5 hash of whole database
-app.get("/api/mobapp/dbHash", passport.authenticate("headerapikey", {session: false, failureMessage: "Incorrect/missing API key"}), async (req, res) => {
-  var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
-
-  MongoClient.connect(url, async function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("lmg-db");
-
-    var hash = undefined;
-
-   await dbo.collection("wifis").find().toArray().then(result => {
-      if(err) throw err;
-
-      //console.log(JSON.stringify(result));
-
-      hash = crypto.createHash("md5").update(JSON.stringify(result)).digest("hex");
-
-      res.send(hash);
-    });
-
-    db.close(); 
-  });
-});
-
-// Calling this while logged in returns JSON object, which contains whole lmg-db.wifis collection
-app.get("/api/mobapp/getCollection", passport.authenticate("headerapikey", {session: false, failureMessage: "Incorrect/missing API key"}), async (req, res) => {
-  var url = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db?retryWrites=true&w=majority";
-
-  MongoClient.connect(url, async function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("lmg-db");
-
-   await dbo.collection("wifis").find().toArray().then(result => {
-      res.send(result);
-    });
-
-    db.close(); 
+// edit user page
+app.get("/editUser", connectEnsureLogin.ensureLoggedIn("/"), (req, res) =>{
+  res.render("editUser", {
+    username: req.user.username,
+    userMail: req.user.email,
+    pfp: req.user.pfp
   });
 });
 
@@ -259,6 +439,18 @@ app.get("/changelog", (req, res) => {
   res.render("changelog");
 });
 
+// TODO: rework this
+// pfp change route
+app.get("/changePFP", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+  res.render("changePFP", {
+    username: req.user.username,
+    pfp: req.user.pfp
+  });
+});
+
+/*
+  ! Server startup settings
+*/
 //set port, listen for requests
 const PORT = process.env.PORT || 8080;
 

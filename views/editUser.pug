@@ -1,0 +1,44 @@
+extends layout
+
+block layout-content
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/user") Home                        
+            form.form-inline(action="/logout", method="GET")
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
+                    button.btn.btn-danger(type="submit") Log Out
+
+    .container
+        p
+            | Change profile picture
+            a(href="/changePFP")  here 
+            | or by clicking on your profile image
+        form(action="/saveUserDetails", method="POST")
+            .form-group
+                label(for="username") Username
+                input.form-control(type="text", name="username" placeholder="Username", value=`${username}`)
+
+            .form-group
+                label(for="password") Password
+                input.form-control(type="password", name="password", placeholder="password")
+
+            .form-group
+                label(for="email") Email
+                input.form-control(type="email", name="email", placeholder="example@mail.com", value=`${userMail}`)
+
+            .form-group
+                label(for="wigle") WiGLE API Key (Encoded)
+                input.form-control(type="text", name="wigle", placeholder="YXFzd2RlZnJndGh6anVraWxvcDI1OHl4Y3Zibm03OC0yMzY6Ymd0emhuanU0NTdhbHM2NWZydDhnYjEyNDd2Y2ZyZDY=")
+
+            .form-group
+                label(for="pwnagotchi") Pwnagotchi's pwnfile
+                input.form-control(type="text", name="pwnagotchi", placeholder="ca1225b86dc35fef90922d83421d2fc9c824e95b864cfa62da7bea64ffb05aea")
+
+            .form-group
+                button.btn.btn-success(type="submit") Update profile

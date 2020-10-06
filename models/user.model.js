@@ -5,7 +5,9 @@ const UserDetail = new Schema({
     username: String,
     password: String,
     email: String, 
-    wigle: String
+    wigle: String,
+    pwnagotchi: String, 
+    pfp: String
 });
 
 module.exports = UserDetail;
