@@ -1,6 +1,8 @@
 extends layout
 
 block layout-content
+    
+
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/user") Home                        
@@ -16,41 +18,32 @@ block layout-content
                     
     .Content
         #map(style="width: 100%; height: 700px;")
+        link(rel='stylesheet', href='https://unpkg.com/leaflet@1.6.0/dist/leaflet.css', integrity='sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==', crossorigin='')
+        script(src='https://unpkg.com/leaflet@1.6.0/dist/leaflet.js', integrity='sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==', crossorigin='')
+        script(src="/js/leaflet.markercluster-src.js" crossorigin="")
+        link(rel='stylesheet', href='/css/MarkerCluster.Default.css' crossorigin="")
+        link(rel='stylesheet', href='/css/MarkerCluster.css' )
         script.
             var mymap = L.map('map', {renderer: L.canvas()}).locate({setView: true, maxZoom: 14});
+            
             L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
-
+            var markers = L.markerClusterGroup({});
             var dbJSON = !{JSON.stringify(dbData)};
             var counter = !{0};
             for(var i = 0; i < dbJSON.length; i++) {
-                /*
-                var iconColor = dbJSON[i].author == "N3ttX" ? new L.Icon({
-                                        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
-                                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                                        iconSize: [25, 41],
-                                        iconAnchor: [12, 41],
-                                        popupAnchor: [1, -34],
-                                        shadowSize: [41, 41]
-                                        }) : new L.Icon({
-                                        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-                                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                                        iconSize: [25, 41],
-                                        iconAnchor: [12, 41],
-                                        popupAnchor: [1, -34],
-                                        shadowSize: [41, 41]
-                                        });
-                */
-
                 var marker = L.circleMarker([dbJSON[i].position[0], dbJSON[i].position[1]], {
                     color: dbJSON[i].author == "N3ttX" ? "#f0ad4e" : "#0275d8",
                     weight: 2,
-                    radius: 7
-                    }).addTo(mymap);
+                    radius: 7,
+                    opacity: 0.5
+                    });
+                markers.addLayer(marker);
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
                                 "<a href='https://wigle.net/search?netid=" + dbJSON[i].MAC + "' target='_blank' data-toggle='tooltip' data-placement='top' title='You have to be logged in WiGLE to use this function.'>More info...</a>");
             }
+            mymap.addLayer(markers);
 
             function sortWifis() {
                 var input, filter, data, list, li, i, txtValue;

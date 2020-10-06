@@ -72,6 +72,9 @@ block layout-content
                         li Profile picture (with ability to change it)
                         li Completely refactored code (better stability, faster, more readable)
                         li Map is now more responsive and faster (moved most of CPU intensive tasks to server)
+                        li Map is now A LOT MORE FASTER, changed default bitmap renderer to Canvas and png markers to dynamically rendered
+                        li Map now group markers in 80px radius into groups, which can be interacted with (zoom at group, expand group)
                         li Removed unused packages
                         li General codebase cleanup
                         li User page buttons replaced with better looking cards
+                        li Load leaflet from CDN only at /map, not on every page (lol)
