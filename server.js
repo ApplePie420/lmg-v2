@@ -193,7 +193,7 @@ app.post("/api/mobapp/authAPI", passport.authenticate("headerapikey", {session: 
 /*
   Creates a new user based on user model, inserts into db. Password is automatically hashed and salted.
 */
-app.post("/registerUser", (req, res, next) => {
+app.post("/registerUser", connectEnsureLogin.ensureLoggedIn("/?info=Only registered users can invite others"), (req, res, next) => {
   try {
     UserDetails.register({
       username: req.body.username,
@@ -380,13 +380,23 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
     var dbo = db.db("lmg-db");
     var counter = 0;
     var UPCcounter = 0;
+    var counter = {"N3ttX": 0, "Czechball": 0, "Grapfield": 0, "Cvolton": 0};
     dbo.collection("wifis").find().toArray(function (err, result) {
       if (err) throw err;
 
       var times = [];
       result.forEach(element => {
         if (element.author == "N3ttX") {
-          counter += 1;
+          counter["N3ttX"] += 1;
+        }
+        if (element.author == "Czechball") {
+          counter["Czechball"] += 1;
+        }
+        if (element.author == "Cvolton") {
+          counter["Cvolton"] += 1;
+        }
+        if (element.author == "Grapfield") {
+          counter["Grapfield"] += 1;
         }
         if (element.SSID.substring(0, 3) == "UPC") {
           UPCcounter += 1;
@@ -410,7 +420,7 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
         username: req.user.username,
         dbData: filtered,
         stringify,
-        nettFound: counter,
+        foundByUser: counter,
         UPCcounter: UPCcounter,
         lastDate: lastDate,
         pfp: req.user.pfp

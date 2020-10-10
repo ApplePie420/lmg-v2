@@ -27,15 +27,36 @@ block layout-content
             var mymap = L.map('map', {renderer: L.canvas()}).locate({setView: true, maxZoom: 14});
             
             L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
-            var markers = L.markerClusterGroup({});
+            var markers = L.markerClusterGroup({
+                maxClusterRadius: 200
+            });
             var dbJSON = !{JSON.stringify(dbData)};
             var counter = !{0};
+
             for(var i = 0; i < dbJSON.length; i++) {
+                var color = null;
+                var author = dbJSON[i].author;
+
+                switch(author){
+                    case("N3ttX"):
+                        color = "#f0ad4e";
+                        break;
+                    case("Czechball"):
+                        color = "#0275d8";
+                        break;
+                    case("Cvolton"):
+                        color = "#55FF55";
+                        break;
+                    case("Grapfield"):
+                        color = "#000000";
+                        break;
+                }
+                
                 var marker = L.circleMarker([dbJSON[i].position[0], dbJSON[i].position[1]], {
-                    color: dbJSON[i].author == "N3ttX" ? "#f0ad4e" : "#0275d8",
+                    color: color,
                     weight: 2,
                     radius: 7,
-                    opacity: 0.5
+                    opacity: 0.8
                     });
                 markers.addLayer(marker);
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
@@ -78,10 +99,16 @@ block layout-content
                             span.badge.badge-light.badge-pill #{dbData.length}
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | N3ttX found
-                            span.badge.badge-warning.badge-pill #{stringify(nettFound)}
+                            span.badge.badge-warning.badge-pill #{stringify(foundByUser["N3ttX"])}
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | Czechball found
-                            span.badge.badge-primary.badge-pill #{stringify(dbData.length-nettFound)}
+                            span.badge.badge-primary.badge-pill #{stringify(foundByUser["Czechball"])}
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | Cvolton found
+                            span.badge.badge-success.badge-pill #{stringify(foundByUser["Cvolton"])}
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | Grapfield found
+                            span.badge.badge-dark.badge-pill #{stringify(foundByUser["Grapfield"])}
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | UPC WiFis
                             span.badge.badge-light.badge-pill #{stringify(UPCcounter)}
@@ -90,7 +117,7 @@ block layout-content
                             span.badge.badge-light.badge-pill #{moment(lastDate).utcOffset(0).format("DD/MM/YYYY HH:mm")}
                 .col-sm
                     input(type="text", class="form-control", id="searchInput", onkeyup="sortWifis()", placeholder="Filter SSIDs..." autocomplete="off", style="width: 100%")
-                    ul.list-group(style="width:100%; height: 200px; overflow: auto", id="wifiList")
+                    ul.list-group(style="width:100%; height: 350px; overflow: auto", id="wifiList")
                         each wifi in dbData
                             li.list-group-item
                                 a(onclick="centerMapOnWifi()") #{wifi.SSID}
