@@ -28,7 +28,10 @@ block layout-content
             
             L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
             var markers = L.markerClusterGroup({
-                maxClusterRadius: 200
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 17
             });
             var dbJSON = !{JSON.stringify(dbData)};
             var counter = !{0};
