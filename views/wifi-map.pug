@@ -53,6 +53,9 @@ block layout-content
                     case("Grapfield"):
                         color = "#000000";
                         break;
+                    case("Bodax"):
+                        color = "#FF69B4";
+                        break;
                 }
                 
                 var marker = L.circleMarker([dbJSON[i].position[0], dbJSON[i].position[1]], {
@@ -112,6 +115,9 @@ block layout-content
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | Grapfield found
                             span.badge.badge-dark.badge-pill #{stringify(foundByUser["Grapfield"])}
+                        li.list-group-item.d-flex.justify-content-between.align-items-center
+                            | Bodax found
+                            span.badge.badge-pill(style="background-color: #FF69B4;") #{stringify(foundByUser["Bodax"])}
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | UPC WiFis
                             span.badge.badge-light.badge-pill #{stringify(UPCcounter)}

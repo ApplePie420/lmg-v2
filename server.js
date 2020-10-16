@@ -1,3 +1,6 @@
+// .env configs, so you can't see my db API and passwords :P
+require("dotenv").config();
+
 // routing
 const express = require("express");
 
@@ -13,7 +16,7 @@ const path = require("path");
 
 // auth and session
 const expressSession = require("express-session")({
-  secret: "secret",
+  secret: process.env.EXPRESS_SECRET,
   resave: true,
   saveUninitialized: false,
   maxAge: Date.now() + (30 * 86400 * 1000)
@@ -77,7 +80,7 @@ app.use(function(req, res, next) {
 app.locals.moment = require("moment");
 
 // mongoDB URL
-const mongoURI = "mongodb+srv://admin:KawX22GgfxtZVxm@n3ttx-cluster-chyxb.mongodb.net/lmg-db";
+const mongoURI = process.env.MONGOURL;
 
 // create GridFS bucket...
 /*
@@ -299,7 +302,7 @@ app.get('/image/:filename', (req, res) => {
     }
 
     // If the file exists then check whether it is an image
-    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png' || file.contentType === "image/gif") {
       // Read output to browser
       const readstream = gfs.createReadStream(file.filename);
       readstream.pipe(res);
@@ -380,7 +383,7 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
     var dbo = db.db("lmg-db");
     var counter = 0;
     var UPCcounter = 0;
-    var counter = {"N3ttX": 0, "Czechball": 0, "Grapfield": 0, "Cvolton": 0};
+    var counter = {"N3ttX": 0, "Czechball": 0, "Grapfield": 0, "Cvolton": 0, "Bodax": 0};
     dbo.collection("wifis").find().toArray(function (err, result) {
       if (err) throw err;
 
