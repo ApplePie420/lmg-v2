@@ -5,85 +5,40 @@ block layout-content
             nav.navbar.navbar-light.bg-light
                 a.navbar-brand(href="/") Home
 
-    .Content
-        h4 19-06-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li Changed marker resolution (to laod map faster)
-                        li Removed client-side marker shadow rendering
-                        li Removed "userBoard" link from "/" route
-                        li Created this changelog
-                        li Fixed some DB issues (old script hadn't UTF-8 encoding and some SSIDs were garbled)
-                        li Added analytics section under the map
-                        li New register input (WiGLE API key for "more info" about wifi)
-        h4 23-06-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li Added "Last added on" analytics entry
-                        li Made map a bit smaller and render properly on viewports
-                        li More info now working and redirects to WiGLE Search page with according MAC address
-                        li Automatically center map on user's physical position
+    .container
+        .card.border-info.mb-3
+            .card-body
+                h5.card-text.d-flex.justify-content-around
+                    span.badge.badge-primary UI Change
+                    span.badge.badge-secondary UX Change
+                    span.badge.badge-success Backend Change
+                    span.badge.badge-danger Database Change
+                    span.badge.badge-warning Map Change
+                    span.badge.badge-info User System Change
+                    span.badge.badge-dark New Page
 
-        h4 03-07-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li Changed badge colors
-                        li Fixed "Last added on", it displayed wrong date
-                        li Changed "Navbar" to "Home"
-                        li Added list of all wifis and filter 
-
-        h4 16-08-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li Completely reworked authentication system (using Passport.JS, moved from using JWT to sessions)
-                        li A lot more lightweight backend, removed ~ 10 files
-                        li Slight redesign of header
-                        li Added user profile page. This is now used as a main page for all logged in users 
-                        li Finally concatted databases for users and this project into one 
-                        li A bit better server-side error handling 
-
-        h4 25-09-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li New GET routes for upcoming 
-                            a(href="https://gitlab.com/vojta-horanek/wifi-passwords?fbclid=IwAR09BCYAZdvA2ThhdkyZOI6j5DX0tLCAAtdJCMsG1czy7g8BbUCTKcICddk") mobile app
-                        li API key authentication
-                        li Minor UI changes and fixes
-
-        h4 01-10-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li Error messages correctly displayed on index page in info/alert/succes box
-                        li /userInfo API returns whole user object
-
-        h4 06-10-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li Error messages correctly displayed on every page now
-                        li User profile system introduced
-                        li Edit user settings (email, password, username, etc)
-                        li Profile picture (with ability to change it)
-                        li Completely refactored code (better stability, faster, more readable)
-                        li Map is now more responsive and faster (moved most of CPU intensive tasks to server)
-                        li Map is now A LOT MORE FASTER, changed default bitmap renderer to Canvas and png markers to dynamically rendered
-                        li Map now group markers in 80px radius into groups, which can be interacted with (zoom at group, expand group)
-                        li Removed unused packages
-                        li General codebase cleanup
-                        li User page buttons replaced with better looking cards
-                        li Load leaflet from CDN only at /map, not on every page (lol)
-
-        h4 10-10-2020
-            h5
-                ul(style="font-family: monospace, Consolas")
-                    i
-                        li We have new contributors! Welcome Cvolton and Grapfield <3
-                        li Stats reworked, more effecient calculation of found by user
-                        li New users on map (green Cvolton, black Grapfield)
-                        li Registrations are now invite-only
+        each log, index in changelog
+            .card.border-primary.mb-3
+                .card-header.border-primary
+                    | #{log.timestamp}
+                .card-body
+                    h5.card-text
+                        ul
+                            each element in log.changes
+                                li= element
+                .card-footer.border-primary.d-flex.justify-content-left.badgeFooter
+                    each badge in log.badges
+                        if badge == "ui"
+                            span.badge.badge-primary UI
+                        if badge == "ux"
+                            span.badge.badge-secondary UX
+                        if badge == "backend"
+                            span.badge.badge-success Backend
+                        if badge == "database"
+                            span.badge.badge-danger Database
+                        if badge == "map"
+                            span.badge.badge-warning Map
+                        if badge == "user_system"
+                            span.badge.badge-info User System
+                        if badge == "new_page"
+                            span.badge.badge-dark New Page

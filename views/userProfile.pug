@@ -22,25 +22,20 @@ block layout-content
             .alert.alert-info(role="alert")
                 | #{info}
 
-        .row
-            .col-sm-6.d-flex.align-items-stretch
-                .card
+        .row(style="margin-top: 10px")
+            .col-sm-12
+                .card.align-items-center
                     .card-body
                         h5.card-title WiFi Map
-                        p.card-text Our biggest project yet. Map of all pwned WiFis around the world.
+                        p.card-text Map of all pwned WiFis around the world.
                         a.btn.btn-info(href="/map") Visit
-            .col-sm-6.d-flex.align-items-stretch
-                .card
-                    .card-body
-                        h5.card-title LMG Calendar
-                        p.card-text WIP Hopefully automatically updated calendar with all LMGs that happened, are happening and will happen. WIP
-                        a.btn.btn-info(href="#" disabled) Visit
+
+        .row(style="margin-top: 10px")
+        //TODO: Most recent changelog piece with link to /changelog page
 
         .row(style="margin-top: 10px")
             .col-sm-12
                 .card.text-white.bg-danger.mb-3
                     .card-header This page is WIP
                     .card-body
-                        .card-title WIP
                         .card-text Your profile page. This will contain projects you have access to, and your settings. Still in WIP tho :/
-                        img(src="https://static.thenounproject.com/png/83064-200.png" width="94" height="94")

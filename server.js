@@ -360,6 +360,44 @@ app.get("/api/mobapp/getCollection", passport.authenticate("headerapikey", {sess
   });
 });
 
+// save shit to changelog collection
+app.post("/api/changelog/saveChangelog", connectEnsureLogin.ensureLoggedIn("/?error=You don't have rights to do this."), (req, res) => {
+  // split incoming text from textarea by newlines
+  var newChanges = req.body.changesArea.split("\r\n");
+
+  // add secret sauces
+  var changesObject = {
+    "timestamp": new Date().toLocaleString(),
+    "changes": [
+      ...newChanges // this is fucking cool, thanks ES6!
+    ],
+    "badges": [
+                req.body.ui == "on" ? "ui" : "",
+                req.body.ux == "on" ? "ux" : "",
+                req.body.backend == "on" ? "backend" : "",
+                req.body.database == "on" ? "database" : "",
+                req.body.map == "on" ? "map" : "",
+                req.body.user_system == "on" ? "user_system" : "",
+                req.body.new_page == "on" ? "new_page" : ""]  // ... and this is retarded. Can't really use switch, so we going Yandere simulator style
+  };
+  //console.log(changesObject); //debug ting
+
+  // write stuff to database
+  MongoClient.connect(mongoURI, async function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("lmg-db");
+
+    dbo.collection("changelog").insertOne(changesObject, function(err, result){
+      if(err) {
+        // redirect with error message
+        res.render("/user?error=" + err);
+      }
+    });
+  });
+  // redirect with success message
+  res.redirect("/user?info=Changelog entry sucesfully created.");
+});
+
 /*
   ! Static routes
 */
@@ -401,6 +439,9 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
         if (element.author == "Grapfield") {
           counter["Grapfield"] += 1;
         }
+        if (element.author == "Bodax") {
+          counter["Bodax"] += 1;
+        }
         if (element.SSID.substring(0, 3) == "UPC") {
           UPCcounter += 1;
         }
@@ -432,6 +473,14 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
   });
 });
 
+// changelog creator
+app.get("/manageChangelog", connectEnsureLogin.ensureLoggedIn("/?error=You have to be N3ttX to access this page"), (req, res) => {
+  res.render("manageChangelog", {
+    username: req.user.username,
+    pfp: req.user.pfp,
+  });
+});
+
 // user profile page
 app.get("/user", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
   res.render("userProfile", {
@@ -453,7 +502,19 @@ app.get("/editUser", connectEnsureLogin.ensureLoggedIn("/"), (req, res) =>{
 
 // changelog route page
 app.get("/changelog", (req, res) => {
-  res.render("changelog");
+  var changelogQuery;
+  MongoClient.connect(mongoURI, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("lmg-db");
+    dbo.collection("changelog").find().toArray(function (err, result) {
+      changelogQuery = result;
+      //console.log(changelogQuery[0]);
+      res.render("changelog", {
+        changelog: changelogQuery,
+        stringify
+      });
+    });
+  });
 });
 
 // TODO: rework this

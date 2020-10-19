@@ -8,6 +8,7 @@ html
         meta(name="theme-color", content="#000000")
         title #{title} | LMG
         link(rel="stylesheet", href="/css/bootstrap.css")
+        link(rel="stylesheet", href="/css/customStyles.css")
         
     body
         div#root
@@ -15,7 +16,11 @@ html
             block layout-content
 
     nav.fixed-bottom.navbar-light.bg-light(style="margin-top: 25px")
-        h6.text-center
-            i This page was made with ❤️ by 
-            a(href="https://n3ttx.me") Radovan "N3ttX" Behýl 
-            | using NodeJS, Bootstrap and PUG. ©️2020, All rights reserved.  
+            h6.text-center
+                i This page was made with ❤️ by 
+                    a(href="https://n3ttx.me") Radovan "N3ttX" Behýl 
+                    | using NodeJS, Bootstrap and PUG. ©️2020, All rights reserved.  
+                    | Code hosted on 
+                    a(href="https://github.com/ApplePie420/lmg-v2")  
+                        img(src="svg/github-brands.svg" width="16" height="16")
+                        |  GitHub 

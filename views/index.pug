@@ -12,6 +12,8 @@ block layout-content
                 a(href="/register")
                     button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
 
+    
+
     div(style="margin: 10px")
         .container
             if error
@@ -21,10 +23,33 @@ block layout-content
             if info
                 .alert.alert-info(role="alert")
                     | #{info}
-            h5 Welcome. Due to some recent changes in backend, respectively auth system, 
-                font(style="color: red")
-                    b YOU NEED TO REGISTER AGAIN.
-                |  Sorry for inconviniences, but I'm trying to make this system as robust, reliable and secure as possible,
-                | and this step was necessary to ensure that. Thanks for understanding.
+            h1 
+                b Welcome to the WiFi Project website
+            h2 So, what is this about?
+            p
+                | The "WiFi Project" focuses on active and passive wireless network sniffing and capturing WPA2 hashes containing the network PSK. 
+                | This is mostly done by using 
+                a(href="https://github.com/ZerBea/hcxdumptool") hcxdumptools by ZerBea. 
+                | These hashes are then processed using 
+                a(href="https://github.com/RealEnder/dwpa") dwpa by RealEnder.
+                | We're currently using the official wpa-sec backend that can be found on 
+                a(href="https://wpa-sec.stanev.org/") wpa-sec.stanev.org
+                | ,but once we finish developing our own backend, we will launch our own dwpa installation. 
+                | Once the hashes are cracked and PSKs are retrieved from dwpa, we use the 
+                a(href="https://wigle.net/") Wigle.net
+                |  API to geolocate the networks and we import them into our own backend, which currently consists of an 
+                | OpenStreetMaps Leaflet and an Android app. We then use this dataset to analyze wireless security, create statistics
+                |  and do more research.
+
+            p
+                | You can read more about this project, how to contribute and more on 
+                a(href="https://github.com/ApplePie420/lmg-v2")  readme file on GitHub repo.
+
+            // TODO: Get the number from database, round to 1000s and display that
+            .card.text-center.text-white.bg-info
+                .card-body
+                    h4 Currently we have over 3000 pwned WiFi networks! 
+            .kek(style="margin-top: 10px")
             a(href="/changelog") 
                 button.btn.btn-info(type="button") Changelog
+            

@@ -1,0 +1,47 @@
+extends layout
+
+block layout-content
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/user") Home                        
+            form.form-inline(action="/logout", method="GET")
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
+                    button.btn.btn-danger(type="submit") Log Out
+  
+    .container(style="margin-top: 10px")
+        if username != "N3ttX"
+            h1 You have nothing to do here. GTFO!
+            img(src="https://vignette.wikia.nocookie.net/harrypotter/images/1/17/Library_book_PS.gif/revision/latest?cb=20180607221857", alt="FUCK OFF", srcset="")
+        else
+            form(action="/api/changelog/saveChangelog", method="post")
+                .form-group
+                    textarea.form-control(name="changesArea", rows="20")
+                    input.btn.btn-success.form-control(type="submit", value="Create Change")
+                .form-group
+                    .form-check
+                        input.form-check-input(type="checkbox", name="ui")
+                        label.form-check-label(for="ui") UI change
+                    .form-check
+                        input.form-check-input(type="checkbox", name="ux")
+                        label.form-check-label(for="ux") UX change
+                    .form-check
+                        input.form-check-input(type="checkbox", name="backend")
+                        label.form-check-label(for="backend") Backend change
+                    .form-check
+                        input.form-check-input(type="checkbox", name="database")
+                        label.form-check-label(for="database") Database change
+                    .form-check
+                        input.form-check-input(type="checkbox", name="map")
+                        label.form-check-label(for="map") Map change
+                    .form-check
+                        input.form-check-input(type="checkbox", name="user_system")
+                        label.form-check-label(for="user_system") User System change
+                    .form-check
+                        input.form-check-input(type="checkbox", name="new_page")
+                        label.form-check-label(for="new_page") New Page
