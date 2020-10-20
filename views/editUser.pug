@@ -38,7 +38,51 @@ block layout-content
 
             .form-group
                 label(for="pwnagotchi") Pwnagotchi's pwnfile
-                input.form-control(type="text", name="pwnagotchi", placeholder="ca1225b86dc35fef90922d83421d2fc9c824e95b864cfa62da7bea64ffb05aea")
+                input.form-control(type="text", name="pwnagotchi", value=`${pwnagotchi}` placeholder="ca1225b86dc35fef90922d83421d2fc9c824e95b864cfa62da7bea64ffb05aea")
+
+            script.
+                var usedMarkers = !{JSON.stringify(usedMarkers)};
+                function getColor(elem) {
+                    usedMarkers.forEach(element => {
+                        if(elem.style.backgroundColor == element) {
+                            alert("Color is in use, please pick another one. And yes, I know about the bug where it selects the color even if it's used. \n I have no fucking idea what is causing this. Will be hopefully fixed in next patch.");
+                            return;
+                        } 
+                        if(elem.style.backgroundColor != element) {
+                            document.getElementById("colorPickText").value = elem.style.backgroundColor;
+                            document.getElementById("colorPickText").style.backgroundColor = elem.style.backgroundColor;
+                        }
+                    });
+                }
+
+            .form-group
+                label(for="pwnagotchi") Map Marker Color
+                input.form-control(type="text", name="markerColor" id="colorPickText" value=`${markerColor}` style="color: white; background-color:" + `${markerColor}`)
+                table.colorPicker(style="margin-top: 10px")
+                    tr
+                        td(style="background-color: rgb(0,0,0)" onClick="getColor(this)")
+                        td(style="background-color: rgb(243,195,0)" onClick="getColor(this)")
+                        td(style="background-color: rgb(154,78,174)" onClick="getColor(this)")
+                        td(style="background-color: rgb(243,132,0)" onClick="getColor(this)")
+                        td(style="background-color: rgb(161,202,241)" onClick="getColor(this)")
+                        td(style="background-color: rgb(190,0,50)" onClick="getColor(this)")
+                        td(style="background-color: rgb(185,181,125)" onClick="getColor(this)")
+                    tr
+                        td(style="background-color: rgb(132,132,130)" onClick="getColor(this)")
+                        td(style="background-color: rgb(0,136,86)" onClick="getColor(this)")
+                        td(style="background-color: rgb(230,143,172)" onClick="getColor(this)")
+                        td(style="background-color: rgb(0,103,165)" onClick="getColor(this)")
+                        td(style="background-color: rgb(249,147,121)" onClick="getColor(this)")
+                        td(style="background-color: rgb(96,78,151)" onClick="getColor(this)")
+                        td(style="background-color: rgb(246,166,0)" onClick="getColor(this)")
+                    tr
+                        td(style="background-color: rgb(179,68,108)" onClick="getColor(this)")
+                        td(style="background-color: rgb(220,211,0)" onClick="getColor(this)")
+                        td(style="background-color: rgb(136,45,23)" onClick="getColor(this)")
+                        td(style="background-color: rgb(141,182,0)" onClick="getColor(this)")
+                        td(style="background-color: rgb(101,69,34)" onClick="getColor(this)")
+                        td(style="background-color: rgb(226,88,34)" onClick="getColor(this)")
+                        td(style="background-color: rgb(35,47,0)" onClick="getColor(this)")
 
             .form-group
                 button.btn.btn-success(type="submit") Update profile

@@ -202,6 +202,11 @@ app.post("/registerUser", connectEnsureLogin.ensureLoggedIn("/?info=Only registe
       username: req.body.username,
       active: false
     }, req.body.password, req.body.email);
+    var dbo = db.db("lmg-db");
+
+    dbo.collection("userColors").insertOne({username: req.body.username}, function(err, res) {
+      if (err) throw err;
+    });
     res.redirect(`/?info=User ${req.body.username} sucesfully registered`);
   } catch (error) {
     next(error);
@@ -248,7 +253,15 @@ app.post("/saveUserDetails", connectEnsureLogin.ensureLoggedIn("/"), (req, res) 
           username: req.body.username,
           email: req.body.email,
           wigle: req.body.wigle,
-          pwnagotchi: req.body.pwnagotchi
+          pwnagotchi: req.body.pwnagotchi,
+          marker_color: req.body.markerColor
+        }}, function(err, res) {
+        if (err) throw err;
+      });
+
+      dbo.collection("userColors").updateOne({username: req.body.username}, {$set: 
+        {
+          marker_color: req.body.markerColor
         }}, function(err, res) {
         if (err) throw err;
       });
@@ -460,14 +473,23 @@ app.get("/map", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
 
       db.close();
       //console.log(result);
-      res.render("wifi-map", {
-        username: req.user.username,
-        dbData: filtered,
-        stringify,
-        foundByUser: counter,
-        UPCcounter: UPCcounter,
-        lastDate: lastDate,
-        pfp: req.user.pfp
+
+      // and get colors 
+      MongoClient.connect(mongoURI, function (err, db) {
+        var dboo = db.db("lmg-db");
+        dboo.collection("userColors").find().toArray(function (err, result) {
+          if (err) throw err;
+          res.render("wifi-map", {
+            username: req.user.username,
+            dbData: filtered,
+            colors: result,
+            stringify,
+            foundByUser: counter,
+            UPCcounter: UPCcounter,
+            lastDate: lastDate,
+            pfp: req.user.pfp
+          });
+        });
       });
     });
   });
@@ -493,10 +515,27 @@ app.get("/user", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
 
 // edit user page
 app.get("/editUser", connectEnsureLogin.ensureLoggedIn("/"), (req, res) =>{
-  res.render("editUser", {
-    username: req.user.username,
-    userMail: req.user.email,
-    pfp: req.user.pfp
+  // get already used marker colors so we can disable them
+  MongoClient.connect(mongoURI, function (err, db) {
+    var dboo = db.db("lmg-db");
+    dboo.collection("userColors").find().toArray(function (err, result) {
+      // array of used colors
+      var usedMarkerColors = [];
+
+      result.forEach(element => {
+        usedMarkerColors.push(element.marker_color);
+      });
+
+      // render the page
+      res.render("editUser", {
+        username: req.user.username,
+        userMail: req.user.email,
+        pfp: req.user.pfp,
+        pwnagotchi: req.user.pwnagotchi,
+        markerColor: req.user.marker_color,
+        usedMarkers: usedMarkerColors
+      });
+    });
   });
 });
 

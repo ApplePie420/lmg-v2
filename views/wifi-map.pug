@@ -34,29 +34,13 @@ block layout-content
                 disableClusteringAtZoom: 17
             });
             var dbJSON = !{JSON.stringify(dbData)};
+            var colors = !{JSON.stringify(colors)};
             var counter = !{0};
 
             for(var i = 0; i < dbJSON.length; i++) {
-                var color = null;
                 var author = dbJSON[i].author;
 
-                switch(author){
-                    case("N3ttX"):
-                        color = "#f0ad4e";
-                        break;
-                    case("Czechball"):
-                        color = "#0275d8";
-                        break;
-                    case("Cvolton"):
-                        color = "#9400D3";
-                        break;
-                    case("Grapfield"):
-                        color = "#000000";
-                        break;
-                    case("Bodax"):
-                        color = "#FF69B4";
-                        break;
-                }
+                var color = colors.find(user => user.username === author).marker_color;
                 
                 var marker = L.circleMarker([dbJSON[i].position[0], dbJSON[i].position[1]], {
                     color: color,
@@ -95,29 +79,18 @@ block layout-content
             function centerMapOnWifi(ssid) {
                 console.log(ssid);
             }
-        
+
         .container
             .row(style="margin: 10px")
                 .col-sm
                     ul.list-group(style="width:100%")
+                        each element in colors
+                            li.list-group-item.d-flex.justify-content-between.align-items-center
+                                | #{element.username} found
+                                span.badge.badge-pill(style="color: white; background-color:" + element.marker_color) #{stringify(foundByUser[element.username])}
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | Results total
                             span.badge.badge-light.badge-pill #{dbData.length}
-                        li.list-group-item.d-flex.justify-content-between.align-items-center
-                            | N3ttX found
-                            span.badge.badge-warning.badge-pill #{stringify(foundByUser["N3ttX"])}
-                        li.list-group-item.d-flex.justify-content-between.align-items-center
-                            | Czechball found
-                            span.badge.badge-primary.badge-pill #{stringify(foundByUser["Czechball"])}
-                        li.list-group-item.d-flex.justify-content-between.align-items-center
-                            | Cvolton found
-                            span.badge.badge-pill(style="background-color: #9400D3;") #{stringify(foundByUser["Cvolton"])}
-                        li.list-group-item.d-flex.justify-content-between.align-items-center
-                            | Grapfield found
-                            span.badge.badge-dark.badge-pill #{stringify(foundByUser["Grapfield"])}
-                        li.list-group-item.d-flex.justify-content-between.align-items-center
-                            | Bodax found
-                            span.badge.badge-pill(style="background-color: #FF69B4;") #{stringify(foundByUser["Bodax"])}
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | UPC WiFis
                             span.badge.badge-light.badge-pill #{stringify(UPCcounter)}

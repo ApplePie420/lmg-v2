@@ -5,3 +5,12 @@ body {
 .badgeFooter span {
     margin-right: 10px;
 }
+
+.colorPicker td {
+    width: 4rem;
+    height: 2rem;
+}
+
+.colorPicker tr {
+    margin-top: 5px;
+}

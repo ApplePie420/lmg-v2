@@ -7,7 +7,8 @@ const UserDetail = new Schema({
     email: String, 
     wigle: String,
     pwnagotchi: String, 
-    pfp: String
+    pfp: String,
+    marker_color: String,
 });
 
 module.exports = UserDetail;
