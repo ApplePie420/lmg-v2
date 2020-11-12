@@ -2,6 +2,13 @@
 const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 
+//auth
+const mongoose = require("mongoose");
+const UserDetail = require("../models/user.model");
+
+// instantiate user model
+const UserDetails = mongoose.model("userInfo", UserDetail, "userInfo");
+
 module.exports = function (app) {
     /*
      * Login post. Should concatc mongoDB and authenticate the user. Redirects to /user, if error, redirects to / with error message
