@@ -75,9 +75,8 @@ block layout-content
                 }
             }
 
-            //TODO: when clicked on a wifi in the list, the map will center at the point
-            function centerMapOnWifi(ssid) {
-                console.log(ssid);
+            function centerMapOnWifi(ssid, lat, lng) {
+                mymap.flyTo(new L.LatLng(lat, lng), 17, {animate: true, duration: 0.75});
             }
 
         .container
@@ -102,4 +101,6 @@ block layout-content
                     ul.list-group(style="width:100%; height: 350px; overflow: auto", id="wifiList")
                         each wifi in dbData
                             li.list-group-item
-                                a(onclick="centerMapOnWifi()") #{wifi.SSID}
+                                a(onclick="centerMapOnWifi('" + String(wifi.SSID) + "'," + wifi.position[0] + "," + wifi.position[1] + ")") 
+                                    b #{wifi.SSID} 
+                                    i -> (#{wifi.MAC})

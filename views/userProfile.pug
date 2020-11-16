@@ -31,11 +31,35 @@ block layout-content
                         a.btn.btn-info(href="/map") Visit
 
         .row(style="margin-top: 10px")
-        //TODO: Most recent changelog piece with link to /changelog page
-
-        .row(style="margin-top: 10px")
             .col-sm-12
                 .card.text-white.bg-danger.mb-3
                     .card-header This page is WIP
                     .card-body
                         .card-text Your profile page. This will contain projects you have access to, and your settings. Still in WIP tho :/
+
+        .row(style="margin-top: 10px")
+            .col-sm-12
+                .card.border-primary.mb-3
+                    .card-header.border-primary
+                        | #{log.timestamp}
+                    .card-body
+                        h5.card-text
+                            ul
+                                each element in log.changes
+                                    li= element
+                    .card-footer.border-primary.d-flex.justify-content-left.badgeFooter
+                        each badge in log.badges
+                            if badge == "ui"
+                                span.badge.badge-primary UI
+                            if badge == "ux"
+                                span.badge.badge-secondary UX
+                            if badge == "backend"
+                                span.badge.badge-success Backend
+                            if badge == "database"
+                                span.badge.badge-danger Database
+                            if badge == "map"
+                                span.badge.badge-warning Map
+                            if badge == "user_system"
+                                span.badge.badge-info User System
+                            if badge == "new_page"
+                                span.badge.badge-dark New Page

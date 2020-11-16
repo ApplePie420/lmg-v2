@@ -1,5 +1,5 @@
 // peekaboo
-require("dotenv").config({
+require("dotenv-flow").config({
     path: "../.env"
 });
 const mongoURI = process.env.MONGOURL;

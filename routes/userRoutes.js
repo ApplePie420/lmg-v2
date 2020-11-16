@@ -1,11 +1,12 @@
 // hiding away, i don't know now, where to hide...
-require("dotenv").config({
+require("dotenv-flow").config({
     path: "../.env"
 });
 const mongoURI = process.env.MONGOURL;
 
 // auth, session
 const connectEnsureLogin = require("connect-ensure-login");
+const {v4: uuidv4} = require("uuid");
 
 // GridFS
 const multer = require("multer");
@@ -14,7 +15,7 @@ const Grid = require("gridfs-stream");
 
 // database
 const mongoose = require("mongoose");
-const MongoClient = require("mongodb").MongoClient({ useUnifiedTopology: true });
+const MongoClient = require("mongodb").MongoClient;
 const UserDetail = require("../models/user.model");
 
 // instantiate user model
@@ -84,7 +85,7 @@ module.exports = function (app) {
                 console.error(err);
             });
 
-            var connection = MongoClient.connect(mongoURI, function (err, db) {
+            MongoClient.connect(mongoURI, function (err, db) {
                 if (err) throw err;
 
                 var dbo = db.db("lmg-db");
@@ -178,4 +179,33 @@ module.exports = function (app) {
             }
         });
     });
+
+    /*
+    * Geenrate unique api key (UUID) for the user
+    */
+    app.post("/generateApiKey", connectEnsureLogin.ensureLoggedIn("/?error=You need to be logged in"), (req, res) => {
+        console.log(req.user.username);
+        try {
+            MongoClient.connect(mongoURI, function (err, db) {
+                if (err) throw err;
+
+                var dbo = db.db("lmg-db");
+
+                dbo.collection("userInfo").updateOne({
+                    username: req.user.username
+                }, {
+                    $set: {
+                        apiKey: uuidv4()
+                    }
+                }, function (err, res) {
+                    if (err) throw err;
+                });
+            });
+        } catch (error) {
+            throw new error;
+            console.log(error);
+        }
+        res.redirect("/user?info=Key generated.");
+    });
+
 }

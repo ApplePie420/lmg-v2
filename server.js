@@ -1,5 +1,5 @@
 // .env configs, so you can't see my db API and passwords :P
-require("dotenv").config();
+require("dotenv-flow").config();
 
 // routing
 const express = require("express");

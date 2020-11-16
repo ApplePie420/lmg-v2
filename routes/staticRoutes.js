@@ -1,5 +1,5 @@
 // so i can hide my secrety secrets from you
-require("dotenv").config({
+require("dotenv-flow").config({
     path: "../.env"
 });
 const mongoURI = process.env.MONGOURL;
@@ -122,11 +122,19 @@ module.exports = function (app) {
      * user profile page
      */
     app.get("/user", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
-        res.render("userProfile", {
-            username: req.user.username,
-            pfp: req.user.pfp,
-            error: req.query.err,
-            info: req.query.info
+        MongoClient.connect(mongoURI, function (err, db) {
+            var dboo = db.db("lmg-db");
+            dboo.collection("changelog").find().sort({timestamp: -1}).toArray(function (err, result) {
+                if (err) throw err;
+                res.render("userProfile", {
+                    stringify,
+                    username: req.user.username,
+                    pfp: req.user.pfp,
+                    error: req.query.err,
+                    info: req.query.info,
+                    log: result[0]
+                });
+            });
         });
     });
 
@@ -145,6 +153,14 @@ module.exports = function (app) {
                     usedMarkerColors.push(element.marker_color);
                 });
 
+                var disableKey;
+
+                if(req.user.apiKey != "") {
+                    disableKey = false;
+                } else {
+                    disableKey = true;
+                }
+
                 // render the page
                 res.render("editUser", {
                     username: req.user.username,
@@ -152,7 +168,9 @@ module.exports = function (app) {
                     pfp: req.user.pfp,
                     pwnagotchi: req.user.pwnagotchi,
                     markerColor: req.user.marker_color,
-                    usedMarkers: usedMarkerColors
+                    usedMarkers: usedMarkerColors,
+                    apiKey: req.user.apiKey,
+                    disableNewKey: disableKey
                 });
             });
         });

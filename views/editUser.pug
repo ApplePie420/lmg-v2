@@ -56,7 +56,7 @@ block layout-content
                 }
 
             .form-group
-                label(for="pwnagotchi") Map Marker Color
+                label(for="markerColor") Map Marker Color
                 input.form-control(type="text", name="markerColor" id="colorPickText" value=`${markerColor}` style="color: white; background-color:" + `${markerColor}`)
                 table.colorPicker(style="margin-top: 10px")
                     tr
@@ -86,3 +86,9 @@ block layout-content
 
             .form-group
                 button.btn.btn-success(type="submit") Update profile
+
+        form(action="/generateApiKey" method="POST")
+            .form-group
+                label(for="apiKey") Your API Key 
+                input.form-control(type="text" name="apiKey" value=`${apiKey}` disabled)
+                button.form-control.btn.btn-success(type="submit" id="generateUUIDbtn") Generate new (rewrite)

@@ -9,6 +9,7 @@ const UserDetail = new Schema({
     pwnagotchi: String, 
     pfp: String,
     marker_color: String,
+    apiKey: String,
 });
 
 module.exports = UserDetail;
