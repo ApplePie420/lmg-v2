@@ -1,8 +1,6 @@
 extends layout
 
 block layout-content
-    
-
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/user") Home                        
@@ -26,15 +24,15 @@ block layout-content
         script.
             var mymap = L.map('map', {renderer: L.canvas()}).locate({setView: true, maxZoom: 14});
             
-            L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
+            var baseLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
             var markers = L.markerClusterGroup({
                 maxClusterRadius: 250,
                 removeOutsideVisibleBounds: true,
                 spiderifyOnMaxZoom: false,
-                disableClusteringAtZoom: 17
+                disableClusteringAtZoom: 16
             });
             var dbJSON = !{JSON.stringify(dbData)};
-            var colors = !{JSON.stringify(colors)};
+            var colors = !{JSON.stringify(usersFound)};
             var counter = !{0};
 
             for(var i = 0; i < dbJSON.length; i++) {
@@ -55,7 +53,7 @@ block layout-content
                                 "<a href='https://wigle.net/search?netid=" + dbJSON[i].MAC + "' target='_blank' data-toggle='tooltip' data-placement='top' title='You have to be logged in WiGLE to use this function.'>More info...</a>");
             }
             mymap.addLayer(markers);
-
+            
             function sortWifis() {
                 var input, filter, data, list, li, i, txtValue;
                 input = document.getElementById("searchInput");
@@ -79,14 +77,19 @@ block layout-content
                 mymap.flyTo(new L.LatLng(lat, lng), 17, {animate: true, duration: 0.75});
             }
 
+            //TODO: checkbox to filter out all UPC wifis
+            function disableUPC() {
+                
+            }
+
         .container
             .row(style="margin: 10px")
                 .col-sm
                     ul.list-group(style="width:100%")
-                        each element in colors
+                        each element in usersFound
                             li.list-group-item.d-flex.justify-content-between.align-items-center
                                 | #{element.username} found
-                                span.badge.badge-pill(style="color: white; background-color:" + element.marker_color) #{stringify(foundByUser[element.username])}
+                                span.badge.badge-pill(style="color: white; background-color:" + element.marker_color) #{element.found}
                         li.list-group-item.d-flex.justify-content-between.align-items-center
                             | Results total
                             span.badge.badge-light.badge-pill #{dbData.length}
@@ -103,4 +106,4 @@ block layout-content
                             li.list-group-item
                                 a(onclick="centerMapOnWifi('" + String(wifi.SSID) + "'," + wifi.position[0] + "," + wifi.position[1] + ")") 
                                     b #{wifi.SSID} 
-                                    i -> (#{wifi.MAC})
+                                    i(style="font-family: consolas") -> (#{wifi.MAC})

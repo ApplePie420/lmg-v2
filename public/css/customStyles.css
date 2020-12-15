@@ -14,3 +14,7 @@ body {
 .colorPicker tr {
     margin-top: 5px;
 }
+
+.sidebar {
+    will-change: auto;
+}

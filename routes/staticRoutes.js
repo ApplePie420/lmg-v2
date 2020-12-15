@@ -15,7 +15,8 @@ module.exports = function (app) {
     /*
      * Home page
      */
-    app.get("/", (req, res) => {
+    app.get("/", connectEnsureLogin.ensureLoggedOut("/user?err=You must log out."), (req, res) => {
+        //TODO: Automatically log user out when is logged in and is visitind root page
         res.render("index", {
             error: req.query.err,
             info: req.query.info
@@ -25,7 +26,7 @@ module.exports = function (app) {
     /*
      * register page
      */
-    app.get("/register", (req, res) => {
+    app.get("/register", connectEnsureLogin.ensureLoggedIn("/?info=This webpage is invite-only. Only already registered users can register new ones."), (req, res) => {
         res.render("register");
     });
 
@@ -48,7 +49,7 @@ module.exports = function (app) {
                 "Cvolton": 0,
                 "Bodax": 0
             };
-            dbo.collection("wifis").find().toArray(function (err, result) {
+            dbo.collection("wifis").find().sort({SSID: 1}).toArray(function (err, result) {
                 if (err) throw err;
 
                 var times = [];
@@ -85,19 +86,32 @@ module.exports = function (app) {
                 var lastDate = times[times.length - 1];
 
                 db.close();
-                //console.log(result);
 
                 // and get colors 
                 MongoClient.connect(mongoURI, function (err, db) {
                     var dboo = db.db("lmg-db");
                     dboo.collection("userColors").find().toArray(function (err, result) {
                         if (err) throw err;
+
+                        // this is retarded and probably highly unnecessary, but I needed somehow to create one array of objects
+                        // which is basically the same as result from "userColors" but with found wifi number
+                        // so I can sort them. There is no way of doing it other way (or at least nothing came to me with current implementation)
+                        var newArray = [];
+                        result.forEach(element => {
+                            element["found"] = counter[element.username]
+                            newArray.push(element); 
+                        });
+
+                        // sort the fcking array so user with most wifis is always on top
+                        newArray.sort((a, b) => {return b.found - a.found});
+
+
+                        result.forEach(element => {})
                         res.render("wifi-map", {
                             username: req.user.username,
                             dbData: filtered,
-                            colors: result,
+                            usersFound: newArray,
                             stringify,
-                            foundByUser: counter,
                             UPCcounter: UPCcounter,
                             lastDate: lastDate,
                             pfp: req.user.pfp
