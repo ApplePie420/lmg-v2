@@ -39,6 +39,8 @@ block layout-content
                 var author = dbJSON[i].author;
 
                 var color = colors.find(user => user.username === author).marker_color;
+
+                var dateT = new Date(dbJSON[i].timestamp);
                 
                 var marker = L.circleMarker([dbJSON[i].position[0], dbJSON[i].position[1]], {
                     color: color,
@@ -50,6 +52,7 @@ block layout-content
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
+                                "<b>Added on: </b>" + !{moment(dateT).format("'DD.MM.YYYY HH:mm'")} + "<br>" +
                                 "<a href='https://wigle.net/search?netid=" + dbJSON[i].MAC + "' target='_blank' data-toggle='tooltip' data-placement='top' title='You have to be logged in WiGLE to use this function.'>More info...</a>");
             }
             mymap.addLayer(markers);
@@ -104,6 +107,12 @@ block layout-content
                     ul.list-group(style="width:100%; height: 350px; overflow: auto", id="wifiList")
                         each wifi in dbData
                             li.list-group-item
-                                a(onclick="centerMapOnWifi('" + String(wifi.SSID) + "'," + wifi.position[0] + "," + wifi.position[1] + ")") 
-                                    b #{wifi.SSID} 
-                                    i(style="font-family: consolas") -> (#{wifi.MAC})
+                                a(onclick="centerMapOnWifi('" + String(wifi.SSID) + "'," + wifi.position[0] + "," + wifi.position[1] + ")")
+                                    u SSID:
+                                    b  #{wifi.SSID} 
+                                    br
+                                    u MAC:
+                                    i(style="font-family: consolas; font-weight: light")  #{wifi.MAC}
+                                    br
+                                    u PSK:
+                                    i  #{wifi.password}
