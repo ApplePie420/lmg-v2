@@ -23,6 +23,13 @@ block layout-content
         link(rel='stylesheet', href='/css/MarkerCluster.css' )
         script.
             var mymap = L.map('map', {renderer: L.canvas()}).locate({setView: true, maxZoom: 14});
+
+            const templateCluster = L.markerClusterGroup({
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 16
+            });
             
             var baseLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
             var markers = L.markerClusterGroup({
@@ -31,6 +38,45 @@ block layout-content
                 spiderifyOnMaxZoom: false,
                 disableClusteringAtZoom: 16
             });
+
+            var UPCmarkers = L.markerClusterGroup({
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 16
+            });
+
+            var czechballCluster = L.markerClusterGroup({
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 16
+            });
+            var cvoltonCluster = L.markerClusterGroup({
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 16
+            });
+            var nettCluster = L.markerClusterGroup({
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 16
+            });
+            var grapfieldCluster = L.markerClusterGroup({
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 16
+            });
+            var bodaxCluster = L.markerClusterGroup({
+                maxClusterRadius: 250,
+                removeOutsideVisibleBounds: true,
+                spiderifyOnMaxZoom: false,
+                disableClusteringAtZoom: 16
+            });
+
             var dbJSON = !{JSON.stringify(dbData)};
             var colors = !{JSON.stringify(usersFound)};
             var counter = !{0};
@@ -48,14 +94,51 @@ block layout-content
                     radius: 7,
                     opacity: 0.8
                     });
-                markers.addLayer(marker);
+                
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
                                 "<b>Added on: </b>" + !{moment(dateT).format("'DD.MM.YYYY HH:mm'")} + "<br>" +
                                 "<a href='https://wigle.net/search?netid=" + dbJSON[i].MAC + "' target='_blank' data-toggle='tooltip' data-placement='top' title='You have to be logged in WiGLE to use this function.'>More info...</a>");
+
+                
+                if(dbJSON[i].author == "Czechball") {
+                    czechballCluster.addLayer(marker);
+                } else if(dbJSON[i].author == "Cvolton") {
+                    cvoltonCluster.addLayer(marker);
+                } else if(dbJSON[i].author == "Bodax") {
+                    bodaxCluster.addLayer(marker);
+                } else if(dbJSON[i].author == "N3ttX") {
+                    nettCluster.addLayer(marker);
+                } else if(dbJSON[i].author == "Grapfield") {
+                    grapfieldCluster.addLayer(marker);
+                }
+                else {
+                    markers.addLayer(marker);
+                }
             }
             mymap.addLayer(markers);
+
+            mymap.addLayer(czechballCluster);
+            mymap.addLayer(cvoltonCluster);
+            mymap.addLayer(bodaxCluster);
+            mymap.addLayer(nettCluster);
+            mymap.addLayer(grapfieldCluster);
+
+            var baseL = {
+                "Base Layer": baseLayer
+            };
+
+            var overlays = {
+                "Czechball": czechballCluster,
+                "Cvolton": cvoltonCluster,
+                "N3ttX": nettCluster,
+                "Grapfield": grapfieldCluster,
+                "Bodax": bodaxCluster
+            };
+
+            L.control.layers(baseL, overlays).addTo(mymap);
+            
             
             function sortWifis() {
                 var input, filter, data, list, li, i, txtValue;
