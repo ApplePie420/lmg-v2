@@ -125,6 +125,7 @@ module.exports = function (app) {
     */
     app.get("/nmapReportExists", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
         // get the SSID
+        // TODO: instead of SSID, make this based on MAC
         var xmlQuery = req.query.SSID;
         // query wifi info collection for SSID
         MongoClient.connect(mongoURI, function (err, db) {
@@ -150,6 +151,7 @@ module.exports = function (app) {
         * Returns JSON with SSIDs of available nmap reports
     */
     app.get("/nmapReportsList", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
+        // TODO: instead of SSID, make this based on MAC
         // query wifi info collection for SSID
         MongoClient.connect(mongoURI, function (err, db) {
             // display error message and throw err
@@ -189,6 +191,7 @@ module.exports = function (app) {
         Timestamp is generated new
     */
     app.post("/api/uploadXML", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
+        // TODO: instead of SSID, make this based on MAC
         // construct database object from req
         var fileUploading = req.files.filename;
         var fileData = fileUploading.data;

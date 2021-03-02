@@ -262,6 +262,7 @@ module.exports = function (app) {
     */
     app.get("/nmapReport", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
         // get the SSID
+        // TODO: instead of SSID, make this based on MAC
         var xmlQuery = decodeURIComponent(req.query.SSID);
         // query wifi info collection for SSID
         MongoClient.connect(mongoURI, function (err, db) {
@@ -315,6 +316,7 @@ module.exports = function (app) {
     */
     app.get("/uploadXML", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
         res.render("uploadXML", {
+            // TODO: instead of SSID, make this based on MAC
             SSID: decodeURIComponent(req.query.SSID),
             MAC: req.query.MAC,
             stringify
