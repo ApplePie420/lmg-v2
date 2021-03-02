@@ -130,7 +130,8 @@ module.exports = function (app) {
                             stringify,
                             UPCcounter: UPCcounter,
                             lastDate: lastDate,
-                            pfp: req.user.pfp
+                            pfp: req.user.pfp,
+                            info: req.query.info
                         });
                     });
                 });
@@ -327,10 +328,20 @@ module.exports = function (app) {
     * Renders error page with error in URL
     */
     app.get("/error", (req, res) => {
-    res.render("error", {
-        error: req.query.err
+        res.render("error", {
+            error: req.query.err
+        });
     });
-});
+
+    /* 
+    * Renders page with form to change WPS PIN
+    */
+    app.get("/editWPS", (req, res) => {
+        res.render("editWPS", {
+            MAC: req.query.MAC,
+            error: req.query.err
+        });
+    });
 
     /*
     * FOR DEBUG PURPOSES

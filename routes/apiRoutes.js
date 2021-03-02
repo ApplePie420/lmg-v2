@@ -226,4 +226,54 @@ module.exports = function (app) {
             });
         });
     });
+
+    /*
+        @ API Call
+        * Updates the WPS field
+    */
+    app.post("/api/editWPS", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
+        // create new input validator
+        const { Validator } = require("node-input-validator");
+
+        // set required MAC address and wps pin to be only number exactly 8 digits long
+        const v = new Validator(req.body, {
+            MAC: "required",
+            wpspin: "required|integer|length:8,8"
+        });
+
+        // perform validation
+        v.check().then((matched) => {
+            if(!matched) {
+                // throw error
+                res.redirect("/editWPS?err=WPS PIN has to be 8 digits");
+            } else {
+                // connect to db
+                MongoClient.connect(mongoURI, function (err, db) {
+                    // display error message and throw err
+                    if (err) {
+                        res.redirect("/error?err=" + err.toString());
+                        throw err;
+                    }
+                    var dbo = db.db("lmg-db");
+                    dbo.collection("wifis").updateOne({
+                        // find wifi with corresponding MAC
+                        MAC: decodeURIComponent(req.body.MAC)
+                    }, {
+                            // set WPS pin to new value
+                            $set: {
+                                WPS: req.body.wpspin
+                            }
+                    }, function (err, res) {
+                        // display error message and throw err
+                        if (err) {
+                            res.redirect("/error?err=" + err.toString());
+                            throw err;
+                        };
+                        // redirect to map on succesfull entry
+                        res.redirect("/map?info=WPS PIN Succesfully updated")
+                    });
+                });
+            }
+        });
+    });
 }

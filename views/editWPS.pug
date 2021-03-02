@@ -1,0 +1,39 @@
+extends layout
+
+block layout-content
+    // header ting
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/user") Home                        
+            form.form-inline(action="/logout", method="GET")
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
+                    button.btn.btn-danger(type="submit") Log Out
+        
+        // main body
+        .container(style="margin-top: 2rem;")
+            if error
+                .card.border-danger
+                    .card-header.bg-danger
+                        b An error occured. 
+                    .card-body.text-danger
+                        p.card-text #{error}
+
+            form(action="/api/editWPS" method="post")
+                // info about network
+                .form-group
+                    | Editing WPS PIN for network with MAC: 
+                    b #{MAC}
+                // file input form and hidden inputs for SSID and MAC passthrough
+                .form-group
+                    label(for="wpspin") New WPS PIN 
+                    input(type="hidden", name="MAC" value=`${MAC}`)
+                    input.form-control(type="text", name="wpspin" required)
+                // button
+                .form-group
+                    button.btn.btn-success(type="submit") Upload

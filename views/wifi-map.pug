@@ -31,20 +31,14 @@ block layout-content
             
             var baseLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
             
+            // create clusters for each user
+            // TODO: make this automatic
             var markers = L.markerClusterGroup({
                 maxClusterRadius: 250,
                 removeOutsideVisibleBounds: true,
                 spiderifyOnMaxZoom: false,
                 disableClusteringAtZoom: 16
             });
-
-            // parse database data
-            //- var UPCmarkers = L.markerClusterGroup({
-            //-     maxClusterRadius: 250,
-            //-     removeOutsideVisibleBounds: true,
-            //-     spiderifyOnMaxZoom: false,
-            //-     disableClusteringAtZoom: 16
-            //- });
 
             var czechballCluster = L.markerClusterGroup({
                 maxClusterRadius: 250,
@@ -97,8 +91,7 @@ block layout-content
                     radius: 7,
                     opacity: 0.8
                     });
-                // add to base marker layer
-                //markers.addLayer(marker);
+                
                 // create marker popup            
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
@@ -108,7 +101,7 @@ block layout-content
                                 "<a href='/uploadXML?SSID=" + dbJSON[i].SSID + "&MAC=" + dbJSON[i].MAC + "'>UPLOAD Nmap</a><br>" +
                                 "<a href='https://wigle.net/search?netid=" + dbJSON[i].MAC + "' target='_blank' data-toggle='tooltip' data-placement='top' title='You have to be logged in WiGLE to use this function.'>More info...</a>");
 
-                
+                // add to infividual marker layer
                 if(dbJSON[i].author == "Czechball") {
                     czechballCluster.addLayer(marker);
                 } else if(dbJSON[i].author == "Cvolton") {
@@ -147,7 +140,6 @@ block layout-content
 
             L.control.layers(baseL, overlays).addTo(mymap);
             
-            
             // sort list in div with id based on some text input, case insensitive
             function sortWifis() {
                 var input, filter, data, list, li, i, txtValue;
@@ -181,6 +173,14 @@ block layout-content
 
         // info list
         .container
+            // error/info badge, displayed only when on URL 
+            if error
+                .alert.alert-danger(role="alert")
+                    | #{error}
+            if info
+                .alert.alert-info(role="alert")
+                    | #{info}
+                    
             .row(style="margin: 10px")
                 .col-sm
                     ul.list-group(style="width:100%")
@@ -209,8 +209,9 @@ block layout-content
                                 u MAC:
                                 i(style="font-family: consolas; font-weight: light")  #{wifi.MAC}
                                 br
-                                u PSK:
-                                i  #{wifi.password}
+                                u PSK / WPS PIN:
+                                i  #{wifi.password} / 
+                                    a(href="/editWPS?MAC=" + encodeURIComponent(wifi.MAC)) #{wifi.WPS}
                                 br
                                 a(href="/nmapReport?SSID=" + encodeURIComponent(wifi.SSID)) 
                                     b Nmap report
