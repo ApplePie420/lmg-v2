@@ -28,40 +28,16 @@ block layout-content
         script.
             // create map
             var mymap = L.map('map', {renderer: L.canvas()}).locate({setView: true, maxZoom: 14});
-
-<<<<<<< HEAD
-            // create base layer at the map
-            var baseLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", 
-                {attribution: "Mapbox", 
-                id: 'mapbox/streets-v11', 
-                maxZoom: 18, 
-                minZoom: 2,
-                bounceAtZoomLimits: false,
-                worldCopyJump: true,
-                updateWhenZooming: true
-                }).addTo(mymap);
-
-            // create marker cluster initializer
-=======
-            const templateCluster = L.markerClusterGroup({
-                maxClusterRadius: 250,
-                removeOutsideVisibleBounds: true,
-                spiderifyOnMaxZoom: false,
-                disableClusteringAtZoom: 16
-            });
             
             var baseLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibjN0dHgiLCJhIjoiY2thdjV6ZHk0MDhtazMzcGNoYTl1cHUwYyJ9.zah7JmDF59WE2UQOcdq98w", {attribution: "Mapbox", id: 'mapbox/streets-v11', maxZoom: 18, minZoom: 2}).addTo(mymap);
->>>>>>> 2d5e20f5c4ec54967684cf42999c5e1151bf8f9a
             var markers = L.markerClusterGroup({
                 maxClusterRadius: 250,
                 removeOutsideVisibleBounds: true,
                 spiderifyOnMaxZoom: false,
                 disableClusteringAtZoom: 16
             });
-<<<<<<< HEAD
-            // parse database data
-=======
 
+            // parse database data
             var UPCmarkers = L.markerClusterGroup({
                 maxClusterRadius: 250,
                 removeOutsideVisibleBounds: true,
@@ -100,7 +76,6 @@ block layout-content
                 disableClusteringAtZoom: 16
             });
 
->>>>>>> 2d5e20f5c4ec54967684cf42999c5e1151bf8f9a
             var dbJSON = !{JSON.stringify(dbData)};
             // parse colours data
             var colors = !{JSON.stringify(usersFound)};
@@ -121,13 +96,10 @@ block layout-content
                     radius: 7,
                     opacity: 0.8
                     });
-<<<<<<< HEAD
                 // add to base marker layer
                 markers.addLayer(marker);
                 // create marker popup            
-=======
                 
->>>>>>> 2d5e20f5c4ec54967684cf42999c5e1151bf8f9a
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
