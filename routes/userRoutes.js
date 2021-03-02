@@ -23,10 +23,10 @@ const UserDetails = mongoose.model("userInfo", UserDetail, "userInfo");
 
 // create GridFS bucket...
 /*
-  TODO: rework this
-  ? Possible bug
-  idk why, but I can't create gridFS bucket inside existing function, so I have to open the DB two times, one only for creating bucket,
-  second for everything else.. idk this is retarded
+    TODO: rework this
+    ? Possible bug
+    idk why, but I can't create gridFS bucket inside existing function, so I have to open the DB two times, one only for creating bucket,
+    second for everything else.. idk this is retarded
 */
 var tempConn = mongoose.createConnection(mongoURI, {
     useNewUrlParser: true,
@@ -68,7 +68,7 @@ module.exports = function (app) {
     /*
      * Changes user details in DB. 
      */
-    app.post("/saveUserDetails", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+    app.post("/saveUserDetails", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
         try {
             // change password hash and salt, it have to be done by this because hashing and salt generation shit
             UserDetails.findByUsername(req.body.username).then(function (sanitizedUser) {
@@ -86,7 +86,11 @@ module.exports = function (app) {
             });
 
             MongoClient.connect(mongoURI, function (err, db) {
-                if (err) throw err;
+                // display error message and throw err
+                if (err) {
+                    res.redirect("/error?err=" + err.toString());
+                    throw err;
+                }
 
                 var dbo = db.db("lmg-db");
 
@@ -101,7 +105,11 @@ module.exports = function (app) {
                         marker_color: req.body.markerColor
                     }
                 }, function (err, res) {
-                    if (err) throw err;
+                    // display error message and throw err
+                    if (err) {
+                        res.redirect("/error?err=" + err.toString());
+                        throw err;
+                    }
                 });
 
                 dbo.collection("userColors").updateOne({
@@ -111,7 +119,11 @@ module.exports = function (app) {
                         marker_color: req.body.markerColor
                     }
                 }, function (err, res) {
-                    if (err) throw err;
+                    // display error message and throw err
+                    if (err) {
+                        res.redirect("/error?err=" + err.toString());
+                        throw err;
+                    }
                 });
             });
         } catch (error) {
@@ -121,11 +133,11 @@ module.exports = function (app) {
     });
 
     /*
-      @API call
-      TODO: Actually get info from DB and return that
-      * Return details about user
+    @API call
+    TODO: Actually get info from DB and return that
+    * Return details about user
     */
-    app.get("/api/userInfo", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+    app.get("/api/userInfo", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
         res.send({
             user: req.user
         });
@@ -134,9 +146,13 @@ module.exports = function (app) {
     /*
      * Profile picture upload
      */
-    app.post("/pfpUpload", upload.single("pfp"), connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+    app.post("/pfpUpload", upload.single("pfp"), connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
         MongoClient.connect(mongoURI, function (err, db) {
-            if (err) throw err;
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
 
             var dbo = db.db("lmg-db");
 
@@ -147,7 +163,11 @@ module.exports = function (app) {
                     pfp: req.file.filename
                 }
             }, function (err, res) {
-                if (err) throw err;
+                // display error message and throw err
+                if (err) {
+                    res.redirect("/error?err=" + err.toString());
+                    throw err;
+                }
             });
         });
         res.redirect("/user");
@@ -160,6 +180,11 @@ module.exports = function (app) {
         gfs.files.findOne({
             filename: req.params.filename
         }, (err, file) => {
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
             // Check if the input is a valid image or not
             if (!file || file.length === 0) {
                 return res.status(404).json({
@@ -183,11 +208,15 @@ module.exports = function (app) {
     /*
     * Geenrate unique api key (UUID) for the user
     */
-    app.post("/generateApiKey", connectEnsureLogin.ensureLoggedIn("/?error=You need to be logged in"), (req, res) => {
+    app.post("/generateApiKey", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
         console.log(req.user.username);
         try {
             MongoClient.connect(mongoURI, function (err, db) {
-                if (err) throw err;
+                // display error message and throw err
+                if (err) {
+                    res.redirect("/error?err=" + err.toString());
+                    throw err;
+                }
 
                 var dbo = db.db("lmg-db");
 
@@ -198,7 +227,11 @@ module.exports = function (app) {
                         apiKey: uuidv4()
                     }
                 }, function (err, res) {
-                    if (err) throw err;
+                    // display error message and throw err
+                    if (err) {
+                        res.redirect("/error?err=" + err.toString());
+                        throw err;
+                    }
                 });
             });
         } catch (error) {

@@ -1,13 +1,16 @@
 extends layout
 
 block layout-content
+    // header thing
     div.Header
             nav.navbar.navbar-light.bg-light
                 a.navbar-brand(href="/") Home
 
+    // main body
     .container
         .card.border-info.mb-3
             .card-body
+                // badges legend
                 h5.card-text.d-flex.justify-content-around
                     span.badge.badge-primary UI Change
                     span.badge.badge-secondary UX Change
@@ -17,15 +20,19 @@ block layout-content
                     span.badge.badge-info User System Change
                     span.badge.badge-dark New Page
 
+        // display each changelog
         each log, index in changelog
             .card.border-primary.mb-3
+                // timestamp
                 .card-header.border-primary
-                    | #{log.timestamp}
+                    i #{log.timestamp}
                 .card-body
                     h5.card-text
+                        // individual changes
                         ul
                             each element in log.changes
                                 li= element
+                // badges
                 .card-footer.border-primary.d-flex.justify-content-left.badgeFooter
                     each badge in log.badges
                         if badge == "ui"

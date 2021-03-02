@@ -1,0 +1,103 @@
+extends layout
+
+block layout-content
+    // brrrrr
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/user") Home                        
+            form.form-inline(action="/logout", method="GET")
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
+                    button.btn.btn-danger(type="submit") Log Out
+
+    // main body
+    .Content
+        .container
+            // import nmap sheet CSS
+            link(rel='stylesheet', href='/css/nmapCSS.css')
+            
+            // header with time
+            .nmap-header 
+                h1 Nmap scan report from 
+                    i #{scan['nmaprun']['$']['startstr']}
+                // all scanned IPs
+                .nmap-hosts-ip
+                each ip in scan["nmaprun"]["host"]
+                    pre #{ip['address'][0]['$']['addr']}
+                h6 Uploaded by 
+                    i #{uploadedBy} 
+                    | at 
+                    i #{timestamp}
+
+            // nmaprun summary
+            .nmap-summary 
+                h2 Summary
+                .nmap-started-info
+                    p Started version 
+                        i #{scan['nmaprun']['$']['version']} 
+                        | with 
+                        code #{scan['nmaprun']['$']['args']}  
+                    // summary table
+                    table.nmap-summary-info-table
+                        tr
+                            th Verbosity level
+                            th Debug level 
+                            th Scanned total (up) in (time)
+                        tr 
+                            td #{scan['nmaprun']['verbose'][0]['$']['level']}
+                            td #{scan['nmaprun']['debugging'][0]['$']['level']}
+                            td #{scan['nmaprun']['runstats'][0]['hosts'][0]['$']['total']} (#{scan['nmaprun']['runstats'][0]['hosts'][0]['$']['up']} up) in (#{scan['nmaprun']['runstats'][0]['finished'][0]['$']['elapsed']} seconds)
+
+            // each scanned host
+            each ip in scan["nmaprun"]["host"]
+                .nmap-host 
+                    h2 #{ip['address'][0]['$']['addr']}
+                    .nmap-host-data 
+                        .nmap-host-addresses-section
+                            // some address info
+                            h3 Addresses
+                            ul.nmap-host-addresses
+                                li #{ip['address'][0]['$']['addr']} (#{ip['address'][0]['$']['addrtype']})
+                                if ip["address"][1]
+                                    li #{ip['address'][1]["$"]["addr"]} - (#{ip['address'][1]['$']['vendor']}) (#{ip['address'][1]['$']['addrtype']})
+
+                        // available ports
+                        .nmap-host-ports-section
+                            h3 Ports
+                            ul.nmap-closed-ports 
+                                li
+                                    b #{ip['ports'][0]['extraports'][0]['$']['count']} 
+                                    | ports were scanned but are 
+                                    b #{ip['ports'][0]['extraports'][0]['$']['state']}
+                                li
+                                    b #{ip['ports'][0]['extraports'][0]['extrareasons'][0]['$']['count']}
+                                    |  replied with: 
+                                    i #{ip['ports'][0]['extraports'][0]['extrareasons'][0]['$']['reason']}
+                            // epic ports table
+                            table.nmap-open-ports-table
+                                tr
+                                    th(colspan="2") Port
+                                    th State 
+                                    th Service 
+                                    th Reason 
+                                each usedPort in ip['ports'][0]['port']
+                                    tr
+                                        td #{usedPort['$']['portid']}
+                                        td #{usedPort['$']['protocol']}
+                                        td #{usedPort['state'][0]['$']['state']}
+                                        td #{usedPort['service'][0]['$']['name']}
+                                        td #{usedPort['state'][0]['$']['reason']}
+
+                        // os detection info
+                        if ip["os"]
+                            h3 Remote OS Detection 
+                            ul 
+                                    each osMatch in ip['os']
+                                        each portUsed in osMatch['portused']
+                                            li Used port: #{portUsed['$']['portid']} / #{portUsed['$']['proto']} (#{portUsed['$']['state']})
+                                        li OS Match: #{osMatch['osmatch'][0]['$']['name']} (#{osMatch['osmatch'][0]['$']['accuracy']}%)

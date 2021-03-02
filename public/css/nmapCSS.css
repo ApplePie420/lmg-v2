@@ -1,0 +1,115 @@
+/* header on top, where scan time and hosts IPs are */
+.nmap-header {
+    margin-bottom: 3rem;
+    padding: 1rem 1rem 0.3rem 1rem;
+    background-color: rgba(255, 255, 153, 0.4);
+    
+}
+
+/* IP addressed */
+.nmap-header pre {
+    display: inline-block;
+    margin-right: 2rem;
+    color: #ff5050;
+}
+
+/* summary section */
+.nmap-summary {
+    margin-bottom: 3rem;
+    border: 1px dashed rgba(153, 153, 255, 0.8);
+    border-radius: 30px;
+}
+
+/* summary header */
+.nmap-summary h2 {
+    text-align: center;
+    border-radius: 30px 30px 0 0;
+    background-color: rgba(153, 153, 255, 0.4);
+}
+
+/* summary started on info */
+.nmap-started-info {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 1rem;
+}
+
+/* summary started on table */
+.nmap-summary-info-table {
+    width: 100%;
+    border: 2px solid #bbb !important;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+/* summary started on table header */
+.nmap-summary-info-table th {
+    border-bottom: 2px solid #bbb;
+}
+
+/* summary started info table internal borders */
+.nmap-summary-info, th, td {
+    border: 1px solid #ccc;
+}
+
+/* host info box */
+.nmap-host {
+    margin-bottom: 3rem;
+    border: 1px dashed rgba(153, 204, 255, 0.8);
+    border-radius: 30px;
+}
+
+/* host info box heading (IP) */
+.nmap-host h2 {
+    text-align: center;
+    border-radius: 30px 30px 0 0;
+    background-color: rgba(153, 204, 255, 0.4);
+}
+
+/* host info box all internal data */
+.nmap-host-data {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+/* host info box subheadings */
+.nmap-host-data h3 {
+    text-decoration: underline;
+}
+
+/* host info box ports list element */
+.nmap-closed-ports {
+    list-style-type: none;
+}
+
+/* host info box addresses list element */
+.nmap-host-addresses {
+    list-style-type: none;
+}
+
+/* host info box open ports table */
+.nmap-open-ports-table {
+    border: 2px solid #bbb !important;
+    width: 100%;
+    text-align: center;
+}
+
+/* host info box open ports table header */
+.nmap-open-ports-table th {
+    border-bottom: 2px solid #bbb;
+}
+
+/* host info box open ports table, every second row is colored */
+.nmap-open-ports-table tr:nth-child(even) {
+    background-color: rgba(212, 233, 255, 0.6);
+}
+
+/* host info box addresses section bottom spacing */
+.nmap-host-addresses-section {
+    margin-bottom: 1rem;
+}
+
+/* host info box ports section bottom spacing */
+.nmap-host-ports-section {
+    margin-bottom: 1rem;
+}

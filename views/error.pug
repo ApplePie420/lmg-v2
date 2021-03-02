@@ -1,0 +1,14 @@
+extends layout
+
+block layout-content
+    .View
+        a(href="/")
+            button.btn.btn-primary.mx-sm-3(type="button") Home
+        .container
+            .card.border-danger
+                .card-header.bg-danger
+                    b An error occured. 
+                .card-body.text-danger
+                    p.card-text #{error}
+                .card-footer
+                    | Please send message below to site's admin (@N3ttX on Telegram)

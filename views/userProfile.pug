@@ -1,6 +1,7 @@
 extends layout
 
 block layout-content
+    // h
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/user") Home                        
@@ -14,7 +15,9 @@ block layout-content
                 .form-group.mx-sm-3.mb-3
                     button.btn.btn-danger(type="submit") Log Out
 
+    // body
     .container(style="margin-top: 10px")
+        // again, error and info badge, displayed only when in URL
         if error
             .alert.alert-danger(role="alert")
                 | #{error}
@@ -22,19 +25,22 @@ block layout-content
             .alert.alert-info(role="alert")
                 | #{info}
 
+        // wifi map link
         .row(style="margin-top: 10px")
             .col-sm-12
-                .card.align-items-center
+                .card.align-items-center.border-danger
                     .card-body
                         h5.card-title WiFi Map
                         p.card-text Map of all pwned WiFis around the world.
                         a.btn.btn-info(href="/map") Visit
 
+        // recent changes
         .row(style="margin-top: 10px")
             .col-sm-12
+                b Most recent changelog:
                 .card.border-primary.mb-3
                     .card-header.border-primary
-                        | #{log.timestamp}
+                        i #{log.timestamp}
                     .card-body
                         h5.card-text
                             ul

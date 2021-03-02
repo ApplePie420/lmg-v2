@@ -7,7 +7,9 @@ html
         meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
         meta(name="theme-color", content="#000000")
         title #{title} | LMG
+        // bootstrap is used everywhere, so load it everywhere
         link(rel="stylesheet", href="/css/bootstrap.css")
+        // also custom styles
         link(rel="stylesheet", href="/css/customStyles.css")
         
     body
@@ -15,6 +17,7 @@ html
             //block header-content
             block layout-content
 
+    // annoying footer thing
     nav.fixed-bottom.navbar-light.bg-light(style="margin-top: 25px")
             h6.text-center
                 i This page was made with ❤️ by 

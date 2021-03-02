@@ -25,21 +25,24 @@ module.exports = function (app) {
         failureMessage: "Incorrect/missing API key"
     }), async (req, res) => {
         MongoClient.connect(mongoURI, async function (err, db) {
-            if (err) throw err;
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
             var dbo = db.db("lmg-db");
-
             var hash = undefined;
 
             await dbo.collection("wifis").find().toArray().then(result => {
-                if (err) throw err;
-
-                //console.log(JSON.stringify(result));
+                // display error message and throw err
+                if (err) {
+                    res.redirect("/error?err=" + err.toString());
+                    throw err;
+                }
 
                 hash = crypto.createHash("md5").update(JSON.stringify(result)).digest("hex");
-
                 res.send(hash);
             });
-
             db.close();
         });
     });
@@ -54,7 +57,11 @@ module.exports = function (app) {
         failureMessage: "Incorrect/missing API key"
     }), async (req, res) => {
         MongoClient.connect(mongoURI, async function (err, db) {
-            if (err) throw err;
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
             var dbo = db.db("lmg-db");
 
             await dbo.collection("wifis").find().toArray().then(result => {
@@ -93,17 +100,127 @@ module.exports = function (app) {
 
         // write stuff to database
         MongoClient.connect(mongoURI, async function (err, db) {
-            if (err) throw err;
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
             var dbo = db.db("lmg-db");
 
             dbo.collection("changelog").insertOne(changesObject, function (err, result) {
+                // display error message and throw err
                 if (err) {
-                    // redirect with error message
-                    res.render("/user?error=" + err);
+                    res.redirect("/error?err=" + err.toString());
+                    throw err;
                 }
             });
         });
         // redirect with success message
         res.redirect("/user?info=Changelog entry sucesfully created.");
+    });
+
+    /*
+        @ API Call
+        * Returns "true" if wifi's nmap report exists
+    */
+    app.get("/nmapReportExists", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
+        // get the SSID
+        var xmlQuery = req.query.SSID;
+        // query wifi info collection for SSID
+        MongoClient.connect(mongoURI, function (err, db) {
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
+            var dbo = db.db("lmg-db");
+            dbo.collection("wifi-info").find({"SSID": xmlQuery}).toArray(function (err, result) {
+                // send false if does not exists, otherwise send true lol
+                if(result.length == 0) {
+                    res.send("false");
+                } else {
+                    res.send("true")
+                }
+            });
+        });
+    });
+
+    /*
+        @ API Call
+        * Returns JSON with SSIDs of available nmap reports
+    */
+    app.get("/nmapReportsList", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
+        // query wifi info collection for SSID
+        MongoClient.connect(mongoURI, function (err, db) {
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
+            var dbo = db.db("lmg-db");
+            dbo.collection("wifi-info").find({}).toArray(function (err, result) {
+                // display error message and throw err
+                if (err) {
+                    res.redirect("/error?err=" + err.toString());
+                    throw err;
+                }
+                // new array of available SSIDs, we don't want users to see our whole colelction
+                var availableSSIDs = [];
+                // push each SSID into the array
+                result.forEach(ssid => {
+                    availableSSIDs.push(ssid.SSID);
+                });
+                // send the array object
+                res.send(availableSSIDs);
+            });
+        });  
+    });
+
+    /*
+        @ API Call
+        * Puts an XML file into the database. Provide following:
+        - SSID and MAC in body
+        - XML file as multipart/form-data in files
+        A valid session has to be established, otherwise nothing will happen
+
+        SSID and MAC is obviously taken from request body
+        Filename, hash amd XML is extracted from file
+        Author's name is taken from currently active session (e.g. you have to be logged in to upload)
+        Timestamp is generated new
+    */
+    app.post("/api/uploadXML", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in"), (req, res) => {
+        // construct database object from req
+        var fileUploading = req.files.filename;
+        var fileData = fileUploading.data;
+
+        var dbEntry = {
+            "SSID": req.body.SSID,
+            "MAC": req.body.MAC,
+            "filename": fileUploading.name,
+            "hash": fileUploading.md5,
+            "XML": fileData.toString("utf-8"),
+            "dateUploaded": new Date().toLocaleString(),
+            "author": req.user.username
+        };
+
+        // connecto to database
+        MongoClient.connect(mongoURI, function (err, db) {
+            // display error message and throw err
+            if (err) {
+                res.redirect("/error?err=" + err.toString());
+                throw err;
+            }
+            var dbo = db.db("lmg-db");
+            dbo.collection("wifi-info").insertOne(dbEntry, function (err, result) {
+                // display error message and throw err
+                if (err) {
+                    res.redirect("/error?err=" + err.toString());
+                    throw err;
+                }
+                
+                // on succesfull entry, redirect to user page with info message
+                res.redirect("/user?info=Nmap report succesfully added. Thank you");
+            });
+        });
     });
 }

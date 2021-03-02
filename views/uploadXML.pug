@@ -1,0 +1,34 @@
+extends layout
+
+block layout-content
+    // header ting
+    div.Header
+        nav.navbar.navbar-light.bg-light
+            a.navbar-brand(href="/user") Home                        
+            form.form-inline(action="/logout", method="GET")
+                .form-group.mx-sm-3.mb-3
+                    h4.nav-item
+                        a(href="/editUser") #{username}
+                .form-group.mx-sm-3.mb-3
+                        a(href="/changePFP")
+                            img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
+                .form-group.mx-sm-3.mb-3
+                    button.btn.btn-danger(type="submit") Log Out
+        // main body
+        .container(style="margin-top: 2rem;")
+            form(action="/api/uploadXML" method="post" enctype="multipart/form-data")
+                // info about network
+                .form-group
+                    | SSID: 
+                    b #{SSID}
+                    br
+                    | MAC: 
+                    i #{MAC}
+                // file input form and hidden inputs for SSID and MAC passthrough
+                .form-group
+                    input(type="hidden", name="SSID" value=`${SSID}`)
+                    input(type="hidden", name="MAC" value=`${MAC}`)
+                    input.form-control(type="file", name="filename" accept=".xml" required)
+                // button
+                .form-group
+                    button.btn.btn-success(type="submit") Upload

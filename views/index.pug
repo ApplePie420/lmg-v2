@@ -1,6 +1,7 @@
 extends layout
 
 block layout-content
+    // header aaaaaaaa
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/") Home
@@ -12,17 +13,18 @@ block layout-content
                 a(href="/register")
                     button.btn.btn-outline-warning.my-2.my-sm-0(type="button") Register
 
-    
-
+    // main body
     div(style="margin: 10px")
         .container
+            // error/info badge, displayed only when on URL 
             if error
                 .alert.alert-danger(role="alert")
                     | #{error}
-
             if info
                 .alert.alert-info(role="alert")
                     | #{info}
+            
+            // desription
             h1 
                 b Welcome to the WiFi Project website
             h2 So, what is this about?
@@ -46,7 +48,7 @@ block layout-content
                 a(href="https://github.com/ApplePie420/lmg-v2/blob/master/README.md")  readme file on GitHub repo, written by one and only 
                 a(href="https://github.com/Czechball")  Czechball.
 
+            // changelog link
             .kek(style="margin-top: 10px")
             a(href="/changelog") 
                 button.btn.btn-info(type="button") Changelog
-            

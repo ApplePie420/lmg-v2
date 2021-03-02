@@ -1,6 +1,7 @@
 extends layout
 
 block layout-content
+    // header ting
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/user") Home                        
@@ -14,11 +15,14 @@ block layout-content
                 .form-group.mx-sm-3.mb-3
                     button.btn.btn-danger(type="submit") Log Out
 
+    // main body
     .container
+        // why is this like this.. change pfp link
         p
             | Change profile picture
             a(href="/changePFP")  here 
             | or by clicking on your profile image
+        // form that POSTs API with all necessary data.. self explanatory
         form(action="/saveUserDetails", method="POST")
             .form-group
                 label(for="username") Username
@@ -40,6 +44,7 @@ block layout-content
                 label(for="pwnagotchi") Pwnagotchi's pwnfile
                 input.form-control(type="text", name="pwnagotchi", value=`${pwnagotchi}` placeholder="ca1225b86dc35fef90922d83421d2fc9c824e95b864cfa62da7bea64ffb05aea")
 
+            // get used markers and make them "unavailable"
             script.
                 var usedMarkers = !{JSON.stringify(usedMarkers)};
                 function getColor(elem) {
@@ -55,6 +60,7 @@ block layout-content
                     });
                 }
 
+            // bruh
             .form-group
                 label(for="markerColor") Map Marker Color
                 input.form-control(type="text", name="markerColor" id="colorPickText" value=`${markerColor}` style="color: white; background-color:" + `${markerColor}`)
@@ -87,6 +93,7 @@ block layout-content
             .form-group
                 button.btn.btn-success(type="submit") Update profile
 
+        // api key is so special, it needs it own form apparently
         form(action="/generateApiKey" method="POST")
             .form-group
                 label(for="apiKey") Your API Key 

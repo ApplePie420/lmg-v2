@@ -77,7 +77,7 @@ module.exports = function (app) {
     /*
      * Destroys session and log out the user.
      */
-    app.get("/logout", connectEnsureLogin.ensureLoggedIn("/"), (req, res) => {
+    app.get("/logout", connectEnsureLogin.ensureLoggedIn("/error?err=You must be logged in to log out xD"), (req, res) => {
         req.logOut();
         res.redirect("/?info=User logged out succesfully");
     });

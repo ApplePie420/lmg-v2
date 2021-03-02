@@ -1,6 +1,7 @@
 extends layout
 
 block layout-content
+    // header thing
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/user") Home                        
@@ -14,7 +15,9 @@ block layout-content
                 .form-group.mx-sm-3.mb-3
                     button.btn.btn-danger(type="submit") Log Out
 
+    // main body
     .container
+        // form, choose file and submit button, POSTs to API
         form(action="/pfpUpload", method="POST", enctype="multipart/form-data")
             .form-group
                 label(for="pfp") Profile Picture

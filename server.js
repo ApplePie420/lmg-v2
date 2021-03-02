@@ -32,6 +32,8 @@ const cookieParser = require("cookie-parser");
 // this really had to be done via fucking middleware.. like.. why
 const favicon = require("serve-favicon");
 
+const fileupload = require("express-fileupload");
+
 // init express app
 const app = express();
 
@@ -40,6 +42,8 @@ var corsOptions = {
   origin: "http://localhost:8081"
 };
 app.use(cors(corsOptions));
+
+app.use(fileupload());
 
 // parsng http body
 app.use(bodyParser.json());

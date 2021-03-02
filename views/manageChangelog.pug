@@ -1,6 +1,7 @@
 extends layout
 
 block layout-content
+    // heeeeeeeeeeeeaaaaaaadeeeeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrr
     div.Header
         nav.navbar.navbar-light.bg-light
             a.navbar-brand(href="/user") Home                        
@@ -13,12 +14,15 @@ block layout-content
                             img(src="/image/" + `${pfp}` style="border-radius: 50%" width="48" height="48")     
                 .form-group.mx-sm-3.mb-3
                     button.btn.btn-danger(type="submit") Log Out
-  
+
+    // main body
     .container(style="margin-top: 10px")
+        // absolutely best fucking auth system
         if username != "N3ttX"
             h1 You have nothing to do here. GTFO!
             img(src="https://vignette.wikia.nocookie.net/harrypotter/images/1/17/Library_book_PS.gif/revision/latest?cb=20180607221857", alt="FUCK OFF", srcset="")
         else
+            // display form where you can insert new changes to changelog
             form(action="/api/changelog/saveChangelog", method="post")
                 .form-group
                     textarea.form-control(name="changesArea", rows="20")
