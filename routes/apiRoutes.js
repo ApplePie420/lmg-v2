@@ -263,7 +263,7 @@ module.exports = function (app) {
                             $set: {
                                 WPS: req.body.wpspin
                             }
-                    }, function (err, res) {
+                    }, function (err, resp) {
                         // display error message and throw err
                         if (err) {
                             res.redirect("/error?err=" + err.toString());
