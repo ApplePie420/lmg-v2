@@ -96,6 +96,7 @@ block layout-content
                 marker.bindPopup("<b>SSID: </b>" + dbJSON[i].SSID + "<br>" +
                                 "<b>MAC: </b>" + dbJSON[i].MAC + "<br>" +
                                 "<b>Pass: </b>" + dbJSON[i].password + "<br>" +
+                                "<b>WPS PIN: </b>" + dbJSON[i].WPS + "<br>" +
                                 "<b>Added on: </b>" + !{moment(dateT).format("'DD.MM.YYYY HH:mm'")} + "<br>" +
                                 "<a href='/nmapReport?SSID=" + dbJSON[i].SSID + "'><b>VIEW Nmap</b></a><br>"+
                                 "<a href='/uploadXML?SSID=" + dbJSON[i].SSID + "&MAC=" + dbJSON[i].MAC + "'>UPLOAD Nmap</a><br>" +
