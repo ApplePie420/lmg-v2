@@ -68,7 +68,7 @@ app.locals.moment = require('moment');
 
 // middleware config
 UserDetail.plugin(passportLocalMongoose);
-const UserDetails = mongoose.model('userInfo', UserDetail, 'userInfo');
+const UserDetails = mongoose.model('./models/userInfo', UserDetail, 'userInfo');
 
 // serialize user
 passport.use(UserDetails.createStrategy());
@@ -80,8 +80,8 @@ passport.use(new apiHeaderKey.HeaderAPIKeyStrategy({
     header: 'Authorization',
 },
 false,
-function(apikey, done) {
-    UserDetails.findOne({
+async function(apikey, done) {
+    await UserDetails.findOne({
         apikey: apikey,
     }, function(err, user) {
         if (err) {
@@ -91,7 +91,7 @@ function(apikey, done) {
             return done(null, false);
         }
 
-        passport.authenticate('local');
+        passport.authenticate();
         return done(null, user);
     });
 },

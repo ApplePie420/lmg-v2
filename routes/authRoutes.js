@@ -9,11 +9,11 @@ const UserDetail = require('../models/user.model');
 // instantiate user model
 const UserDetails = mongoose.model('userInfo', UserDetail, 'userInfo');
 
-module.exports = function(app) {
+module.exports = async function(app) {
     /*
      * Login post. Should concatc mongoDB and authenticate the user. Redirects to /user, if error, redirects to / with error message
      */
-    app.post('/login', (req, res, next) => {
+    await app.post('/login', (req, res, next) => {
         passport.authenticate('local', {
             successReturnToOrRedirect: '/',
             failureRedirect: '/?err=Something went wrong',
